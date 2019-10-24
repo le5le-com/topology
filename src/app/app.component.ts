@@ -47,12 +47,9 @@ export class AppComponent implements OnInit, OnDestroy {
   menuClicked = false;
   showFigure = false;
   editFilename = false;
-  blank = false;
   editMode = false;
   locked = 0;
   scale = 100;
-
-  disableStartDlg = false;
 
   showLicense = false;
   showHelp = false;
@@ -60,8 +57,6 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(private storeService: StoreService, private router: Router, private activateRoute: ActivatedRoute) {}
 
   ngOnInit() {
-    this.disableStartDlg = localStorage.getItem('disable.startDlg') === 'true';
-    this.blank = location.pathname === '/' && !location.search && !this.disableStartDlg;
     this.user = this.storeService.get('user');
     this.storeService.get$('user').subscribe((user: any) => {
       this.user = user;
@@ -171,8 +166,6 @@ export class AppComponent implements OnInit, OnDestroy {
       },
       this.editMode ? 0 : 300
     );
-
-    this.blank = false;
   }
 
   onClickMenu(event: MouseEvent) {
@@ -288,10 +281,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   onSignout() {
     this.storeService.set('auth', -1);
-  }
-
-  onChangeDisableStart() {
-    localStorage.setItem('disable.startDlg', this.disableStartDlg + '');
   }
 
   ngOnDestroy() {}

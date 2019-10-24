@@ -9,16 +9,24 @@ export class Point {
 
   hidden: boolean;
   data: any;
-  constructor(public x: number, public y: number, direction?: Direction, anchorIndex?: number, id?: number | string) {
+  constructor(
+    public x: number,
+    public y: number,
+    direction?: Direction,
+    anchorIndex?: number,
+    id?: number | string,
+    hidden?: boolean
+  ) {
     this.x = this.x;
     this.y = this.y;
     this.direction = direction;
     this.anchorIndex = anchorIndex;
     this.id = id;
+    this.hidden = hidden;
   }
 
   clone(): Point {
-    const pt = new Point(this.x, this.y, this.direction, this.anchorIndex, this.id);
+    const pt = new Point(this.x, this.y, this.direction, this.anchorIndex, this.id, this.hidden);
     if (this.data) {
       pt.data = this.data;
     }
