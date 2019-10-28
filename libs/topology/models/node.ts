@@ -128,6 +128,7 @@ export class Node extends Pen {
 
   init() {
     // Calc rect of text.
+    console.log("Calc rect of text.");
     if (textRectFns[this.name]) {
       textRectFns[this.name](this);
     } else {

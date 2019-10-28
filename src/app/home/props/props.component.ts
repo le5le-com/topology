@@ -56,6 +56,30 @@ export class PropsComponent implements OnInit, OnChanges {
     noDefaultOption: true
   };
 
+  gradientDirectionOptions = {
+    id: 'id',
+    name: 'name',
+    list: [
+      {
+        id: 'east',
+        name: '东西'
+      },
+      {
+        id: 'south',
+        name: '南北'
+      },
+      {
+        id: 'west',
+        name: '西东'
+      },
+      {
+        id: 'north',
+        name: '北南'
+      }
+    ],
+    noDefaultOption: true
+  };
+
   textAlignOptions = {
     id: 'id',
     name: 'name',

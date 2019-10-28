@@ -1,11 +1,12 @@
-import { s8 } from '../uuid/uuid';
-import { Point } from './point';
-import { Rect } from './rect';
-import { pointInRect } from '../middles/utils';
+import { s8 } from "../uuid/uuid";
+import { Point } from "./point";
+import { Rect } from "./rect";
+import { pointInRect } from "../middles/utils";
+import { start } from "repl";
 
 export abstract class Pen {
-  id = '';
-  name = '';
+  id = "";
+  name = "";
   rect: Rect = new Rect(0, 0, 0, 0);
   lineWidth = 1;
   rotate = 0;
@@ -13,17 +14,18 @@ export abstract class Pen {
   globalAlpha = 1;
 
   dash = 0;
-  strokeStyle = '';
-  fillStyle = '';
+  strokeStyle = "";
+  fillStyle = "";
   font = {
-    color: '',
-    fontFamily: '"Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial',
+    color: "",
+    fontFamily:
+      '"Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial',
     fontSize: 12,
     lineHeight: 1.5,
-    fontStyle: 'normal',
-    fontWeight: 'normal',
-    textAlign: 'center',
-    textBaseline: 'middle'
+    fontStyle: "normal",
+    fontWeight: "normal",
+    textAlign: "center",
+    textBaseline: "middle"
   };
 
   // Date.getTime
@@ -34,17 +36,28 @@ export abstract class Pen {
 
   // For users.
   data: any;
+
+  // For gradient
+  gradient = 0;
+  gradientDirection = "";
+  gradientEndFillStyle = "";
+
   constructor(json?: any) {
     if (json) {
       this.id = json.id || s8();
-      this.name = json.name || '';
+      this.name = json.name || "";
       if (json.rect) {
-        this.rect = new Rect(json.rect.x, json.rect.y, json.rect.width, json.rect.height);
+        this.rect = new Rect(
+          json.rect.x,
+          json.rect.y,
+          json.rect.width,
+          json.rect.height
+        );
       }
       this.dash = json.dash || 0;
       this.lineWidth = json.lineWidth || 1;
-      this.strokeStyle = json.strokeStyle || '';
-      this.fillStyle = json.fillStyle || '';
+      this.strokeStyle = json.strokeStyle || "";
+      this.fillStyle = json.fillStyle || "";
       this.globalAlpha = json.globalAlpha || 1;
       this.rotate = json.rotate || 0;
       this.offsetRotate = json.offsetRotate || 0;
@@ -52,7 +65,7 @@ export abstract class Pen {
         Object.assign(this.font, json.font);
       }
       this.animateCycle = json.animateCycle;
-      this.data = json.data || '';
+      this.data = json.data || "";
     } else {
       this.id = s8();
     }
@@ -73,13 +86,35 @@ export abstract class Pen {
     if (this.strokeStyle) {
       ctx.strokeStyle = this.strokeStyle;
     } else {
-      ctx.strokeStyle = '#333';
+      ctx.strokeStyle = "#333";
     }
 
-    if (this.fillStyle) {
+    // Add gradient
+    if (
+      this.gradient &&
+      this.gradientDirection &&
+      this.fillStyle &&
+      this.gradientEndFillStyle
+    ) {
+      // TODO: add gradient direction
+      // var start = { x: 0, y: 0 };
+      // var end = { x: 0, y: 0 };
+      // switch this.gradientDirection:
+      //   case "east": start.x = 0, start.y = this.rect.y;
+
+      var grd = ctx.createLinearGradient(
+        this.rect.x,
+        this.rect.y,
+        this.rect.ex,
+        this.rect.ey
+      );
+      grd.addColorStop(0, this.fillStyle);
+      grd.addColorStop(1, this.gradientEndFillStyle);
+      ctx.fillStyle = grd;
+    } else if (this.fillStyle) {
       ctx.fillStyle = this.fillStyle;
     } else {
-      ctx.fillStyle = 'transparent';
+      ctx.fillStyle = "transparent";
     }
 
     if (this.globalAlpha < 1) {
