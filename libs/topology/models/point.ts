@@ -49,4 +49,9 @@ export class Point {
     this.y = y;
     return this;
   }
+
+  round() {
+    this.x = Math.round(this.x);
+    this.y = Math.round(this.y);
+  }
 }

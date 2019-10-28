@@ -34,6 +34,8 @@ export interface Props {
       linear: boolean;
       state: Node;
     }[];
+    nextAnimate?: string;
+    tags: string[];
     data?: any;
 
     // Node

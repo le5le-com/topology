@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { StoreService } from 'le5le-store';
+import { Store } from 'le5le-store';
 import { NoticeService } from 'le5le-components/notice';
 
 import { HotService } from './hot.service';
@@ -26,15 +26,10 @@ export class HotComponent implements OnInit, OnDestroy {
   loading = true;
 
   subRoute: any;
-  constructor(
-    private service: HotService,
-    private router: Router,
-    private activateRoute: ActivatedRoute,
-    private storeService: StoreService
-  ) {}
+  constructor(private service: HotService, private router: Router, private activateRoute: ActivatedRoute) {}
 
   ngOnInit() {
-    const data = this.storeService.get('hots');
+    const data = Store.get('hots');
 
     this.subRoute = this.activateRoute.queryParamMap.subscribe(params => {
       this.search.pageIndex = +params.get('pageIndex') || 1;
@@ -58,7 +53,7 @@ export class HotComponent implements OnInit, OnDestroy {
     this.loading = false;
 
     if (this.search.pageIndex === 1) {
-      this.storeService.set('hots', this.data);
+      Store.set('hots', this.data);
     }
   }
 
@@ -73,7 +68,7 @@ export class HotComponent implements OnInit, OnDestroy {
   onFavorite(event: MouseEvent, item: any) {
     event.stopPropagation();
 
-    if (!this.storeService.get('user')) {
+    if (!Store.get('user')) {
       const _noticeService: NoticeService = new NoticeService();
       _noticeService.notice({
         body: '请先登录',
@@ -88,7 +83,7 @@ export class HotComponent implements OnInit, OnDestroy {
   onStar(event: MouseEvent, item: any) {
     event.stopPropagation();
 
-    if (!this.storeService.get('user')) {
+    if (!Store.get('user')) {
       const _noticeService: NoticeService = new NoticeService();
       _noticeService.notice({
         body: '请先登录',

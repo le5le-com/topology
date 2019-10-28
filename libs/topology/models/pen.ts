@@ -6,6 +6,7 @@ import { pointInRect } from '../middles/utils';
 export abstract class Pen {
   id = '';
   name = '';
+  tags: string[] = [];
   rect: Rect = new Rect(0, 0, 0, 0);
   lineWidth = 1;
   rotate = 0;
@@ -31,6 +32,7 @@ export abstract class Pen {
   // Cycle count. Infinite if <= 0.
   animateCycle: number;
   animateCycleIndex = 0;
+  nextAnimate: string;
 
   // For users.
   data: any;
@@ -38,6 +40,7 @@ export abstract class Pen {
     if (json) {
       this.id = json.id || s8();
       this.name = json.name || '';
+      this.tags = json.tags || [];
       if (json.rect) {
         this.rect = new Rect(json.rect.x, json.rect.y, json.rect.width, json.rect.height);
       }
@@ -52,6 +55,7 @@ export abstract class Pen {
         Object.assign(this.font, json.font);
       }
       this.animateCycle = json.animateCycle;
+      this.nextAnimate = json.nextAnimate;
       this.data = json.data || '';
     } else {
       this.id = s8();

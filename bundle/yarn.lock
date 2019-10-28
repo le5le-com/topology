@@ -2394,6 +2394,11 @@ lcid@^2.0.0:
   dependencies:
     invert-kv "^2.0.0"
 
+le5le-store@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/le5le-store/-/le5le-store-1.0.1.tgz#73b2e0610f92b99b4d4ecd29e82b3bada7fc224d"
+  integrity sha512-g7kAC9zJwzlaRMs17xCGqAIEW461RylJOmmlVGoiiu3RdwUoyJdKuFwFIpJNtrEwzXC7X+Qtt9exsQrbJGGe1A==
+
 loader-runner@^2.4.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/loader-runner/-/loader-runner-2.4.0.tgz#ed47066bfe534d7e84c4c7b9998c2a75607d9357"
@@ -3703,49 +3708,6 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     extend-shallow "^3.0.2"
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
-
-topology-activity-diagram@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/topology-activity-diagram/-/topology-activity-diagram-0.0.3.tgz#2061d77edc26b280d9b5a1a61ef53e47ed09dfd8"
-  integrity sha512-1K69GdXphoWuJGGpS3aPEH1myOYpV21UV3N7SYIcP87i0aLf49kGxoR9ItHOQVwOAbTiY2zuk3g+PaMF3vAA0Q==
-  dependencies:
-    topology-core "^0.0.3"
-
-topology-class-diagram@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/topology-class-diagram/-/topology-class-diagram-0.0.1.tgz#d1d1bf692a7a993a4fdfad2cfd28dba6bd6dc64c"
-  integrity sha512-QrC87MNkdVzMSSJ2g4r8Y1MpFTj6yLQF+cwFq13yLTqsEwJnEMav+mBUHnM7858UxQXjJWj48DHXR8zKpVU2fw==
-  dependencies:
-    topology-core "^0.0.3"
-
-topology-core@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/topology-core/-/topology-core-0.0.2.tgz#ed84aad61178cae69a0d2d43e02b96acbcec306b"
-  integrity sha512-02fVEbcDqANxLaLNR4WlqYiRGGs2OZ7ZjgUOGzu2kNqOAYHqCkSLdrvvRtJe6/Bbg6t0FYlrkWv0UeSwMD06dA==
-
-topology-core@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/topology-core/-/topology-core-0.0.3.tgz#ee001ff3ee33d71ac8068e3a977c01dd10fbe8e7"
-  integrity sha512-dNWCu8h+QzmKdE6U1MRQY6oeLwNlmYV014u9ihx5rpTPpgTdK5cznEGHAWG5NeD+h39n8kaGJ4exg4dzYanrZA==
-
-topology-core@^0.0.6:
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/topology-core/-/topology-core-0.0.6.tgz#16f2cfdae634e30b8b1d3fedae02d538106c9a69"
-  integrity sha512-R16TswH0mJ9/i5SDJq27HMbwHS+2blXuu6VU5Nl4opjBQMo2lLUFygzTyRmz0kRbHJqYAL4R3pS1UBcSTWLPvw==
-
-topology-flow-diagram@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/topology-flow-diagram/-/topology-flow-diagram-0.0.1.tgz#c169a7b643b3803330ebeb9381d721a85b409c4b"
-  integrity sha512-4MCJ9N6Tuv0TLeWySvHbj4Op4qlaQqqSt0Y6kGnA6L3TD2IwkOTN7UBvx6ePaTia734BDS2CN7bwPXvb5o5xhg==
-  dependencies:
-    topology-core "^0.0.2"
-
-topology-sequence-diagram@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/topology-sequence-diagram/-/topology-sequence-diagram-0.0.3.tgz#d974bc1ccc04bdda5112ed25d7f80a34fd34f6e3"
-  integrity sha512-VnJ8URkskD4iFyFRrDD4UO6o7P0M6OTP5ZI9Ux7NjnyRcZVV2yKlVkWWQUN+e5XdlIQ7vfGvUVuGgvqqswjWsQ==
-  dependencies:
-    topology-core "^0.0.3"
 
 ts-loader@^6.0.3:
   version "6.2.0"

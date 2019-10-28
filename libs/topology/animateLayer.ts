@@ -1,6 +1,6 @@
 import { Node } from './models/node';
 import { Line } from './models/line';
-import { Store } from './store/store';
+import { Store } from 'le5le-store';
 
 export class AnimateLayer {
   canvas = document.createElement('canvas');
@@ -31,10 +31,21 @@ export class AnimateLayer {
       this.lines = [];
     }
 
-    const nodes = Store.get('nodes');
-    const lines = Store.get('lines');
+    this.getNodes(Store.get('nodes'));
+    this.getLines();
+
+    this.animate();
+  }
+
+  getNodes(nodes: Node[], tag = '') {
+    if (!nodes) {
+      return;
+    }
     for (const item of nodes) {
       let found = false;
+      if (tag && item.tags.indexOf(tag) > -1) {
+        item.animateStart = Date.now();
+      }
       for (let i = 0; i < this.nodes.length; ++i) {
         if (this.nodes[i].id === item.id) {
           item.animateCycleIndex = 1;
@@ -46,11 +57,20 @@ export class AnimateLayer {
       }
 
       if (!found && item.animateStart) {
-        this.addNode(item);
+        item.updateAnimateProps();
+        this.nodes.push(item);
+        this.getNodes(item.children);
       }
     }
+  }
+
+  getLines(tag = '') {
+    const lines = Store.get('lines');
     for (const item of lines) {
       let found = false;
+      if (tag && item.tags.indexOf(tag) > -1) {
+        item.animateStart = Date.now();
+      }
       for (let i = 0; i < this.lines.length; ++i) {
         if (this.lines[i].id === item.id) {
           this.lines[i].animateCycle = item.animateCycle;
@@ -59,6 +79,7 @@ export class AnimateLayer {
           this.lines[i].strokeStyle = item.animateColor || this.options.animateColor;
           this.lines[i].animateSpan = item.animateSpan;
           found = true;
+
           if (item.animateStart) {
             this.lines[i].animateStart = item.animateStart;
           } else {
@@ -68,33 +89,16 @@ export class AnimateLayer {
       }
 
       if (!found && item.animateStart) {
-        this.addLine(item);
+        const l = new Line(item);
+        l.animateStart = item.animateStart;
+        l.fromArrow = '';
+        l.toArrow = '';
+        l.lineWidth += 1;
+        l.strokeStyle = l.animateColor || this.options.animateColor;
+        l.length = l.getLen();
+        this.lines.push(l);
       }
     }
-
-    this.animate();
-  }
-
-  addNode(node: Node) {
-    let passed = 0;
-    for (let i = 0; i < node.animateFrames.length; ++i) {
-      node.animateFrames[i].start = passed;
-      passed += node.animateFrames[i].duration;
-      node.animateFrames[i].end = passed;
-      node.animateFrames[i].initState = Node.cloneState(i ? node.animateFrames[i - 1].state : node);
-    }
-    this.nodes.push(node);
-  }
-
-  addLine(line: Line) {
-    const l = new Line(line);
-    l.fromArrow = '';
-    l.toArrow = '';
-    l.lineWidth += 1;
-    l.strokeStyle = l.animateColor || this.options.animateColor;
-    l.length = l.getLen();
-    l.animateStart = line.animateStart;
-    this.lines.push(l);
   }
 
   animate() {
@@ -117,14 +121,33 @@ export class AnimateLayer {
 
         const ctx = this.canvas.getContext('2d');
         for (let i = 0; i < this.lines.length; ++i) {
-          this.lines[i].animate(ctx);
+          const next = this.lines[i].animate(ctx);
+          if (!this.lines[i].animateStart) {
+            for (const item of Store.get('lines')) {
+              if (this.lines[i].id === item.id) {
+                item.animateStart = 0;
+                break;
+              }
+            }
+          }
+          if (next) {
+            this.lines.splice(i, 1);
+            this.getNodes(Store.get('nodes'), next);
+            this.getLines(next);
+          }
+
           if (this.lines[i] && !this.lines[i].animateStart) {
             this.lines.splice(i, 1);
           }
         }
         for (let i = 0; i < this.nodes.length; ++i) {
           if (this.nodes[i].animateDuration && this.nodes[i].animateStart) {
-            this.nodes[i].animate(ctx, now);
+            const next = this.nodes[i].animate(ctx, now);
+            // console.log(123123, next);
+            if (next) {
+              this.getNodes(Store.get('nodes'), next);
+              this.getLines(next);
+            }
           } else {
             this.nodes.splice(i, 1);
           }

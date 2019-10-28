@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { StoreService } from 'le5le-store';
+import { Store } from 'le5le-store';
 import { NoticeService } from 'le5le-components/notice';
 
 import { UserHistoryService } from './history.service';
@@ -42,13 +42,12 @@ export class UserHistoryComponent implements OnInit, OnDestroy {
     private service: UserHistoryService,
     private router: Router,
     private activateRoute: ActivatedRoute,
-    private storeService: StoreService,
     private coreService: CoreService
   ) {}
 
   ngOnInit() {
-    this.user = this.storeService.get('user');
-    this.subUser = this.storeService.get$('user').subscribe((user: any) => {
+    this.user = Store.get('user');
+    this.subUser = Store.subcribe('user', (user: any) => {
       this.user = user;
       this.isVip = this.coreService.isVip(this.user);
     });

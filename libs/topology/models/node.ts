@@ -5,7 +5,7 @@ import { anchorsFns, iconRectFns, textRectFns, drawNodeFns } from '../middles';
 import { defaultAnchors } from '../middles/default.anchor';
 import { defaultIconRect, defaultTextRect } from '../middles/default.rect';
 import { text, iconfont } from '../middles/nodes/text';
-import { Store } from '../store/store';
+import { Store } from 'le5le-store';
 
 export class Node extends Pen {
   is3D = false;
@@ -328,6 +328,16 @@ export class Node extends Pen {
     this.img = null;
   }
 
+  updateAnimateProps() {
+    let passed = 0;
+    for (let i = 0; i < this.animateFrames.length; ++i) {
+      this.animateFrames[i].start = passed;
+      passed += this.animateFrames[i].duration;
+      this.animateFrames[i].end = passed;
+      this.animateFrames[i].initState = Node.cloneState(i ? this.animateFrames[i - 1].state : this);
+    }
+  }
+
   animate(ctx: CanvasRenderingContext2D, now: number) {
     let timeline = now - this.animateStart;
     if (timeline > this.animateDuration) {
@@ -351,7 +361,7 @@ export class Node extends Pen {
           type: 'node',
           data: this
         });
-        return;
+        return this.nextAnimate;
       }
       this.animateStart = now;
       timeline = 0;
@@ -450,5 +460,20 @@ export class Node extends Pen {
     this.rect.ey = this.rect.y + this.rect.height;
     this.rect.calceCenter();
     this.init();
+
+    if (this.children) {
+      for (const item of this.children) {
+        item.scale(scale, center);
+      }
+    }
+  }
+
+  round() {
+    this.rect.round();
+    if (this.children) {
+      for (const item of this.children) {
+        item.rect.round();
+      }
+    }
   }
 }

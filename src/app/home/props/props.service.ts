@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 
-import { StoreService } from 'le5le-store';
+import { Store } from 'le5le-store';
 
 import { HttpService } from 'src/app/http/http.service';
 
 @Injectable()
 export class PropsService {
-  constructor(protected http: HttpService, private storeService: StoreService) {}
+  constructor(protected http: HttpService) {}
 
   static images: { id: string; image: string }[];
 
@@ -29,7 +29,7 @@ export class PropsService {
       return PropsService.images;
     }
 
-    if (!this.storeService.get('user')) {
+    if (!Store.get('user')) {
       return [];
     }
 

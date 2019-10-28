@@ -25,7 +25,7 @@
     "core-js": "^2.5.4",
     "file-saver": "^2.0.2",
     "le5le-components": "^0.8.0",
-    "le5le-store": "^0.7.0",
+    "le5le-store": "^1.0.0",
     "le5le-ui": "^0.7.1",
     "ngresizable": "^1.0.0",
     "ngx-color-picker": "^8.1.0",

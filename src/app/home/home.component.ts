@@ -81,7 +81,7 @@ import {
 } from 'libs/topology-sequence-diagram';
 
 import * as FileSaver from 'file-saver';
-import { StoreService } from 'le5le-store';
+import { Store } from 'le5le-store';
 import { NoticeService } from 'le5le-components/notice';
 
 import { HomeService, Tools } from './home.service';
@@ -134,15 +134,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   subRoute: any;
   constructor(
     private service: HomeService,
-    private storeService: StoreService,
     private coreService: CoreService,
     private router: Router,
     private activateRoute: ActivatedRoute
   ) {}
 
   ngOnInit() {
-    this.user = this.storeService.get('user');
-    this.subUser = this.storeService.get$('user').subscribe((user: any) => {
+    this.user = Store.get('user');
+    this.subUser = Store.subcribe('user', (user: any) => {
       this.user = user;
       if (this.data && user && this.data.userId !== this.user.id) {
         this.data.shared = false;
@@ -151,7 +150,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
 
     this.canvasOptions.on = this.onMessage;
-    this.subMenu = this.storeService.get$('clickMenu').subscribe((menu: { event: string; data: any }) => {
+    this.subMenu = Store.subcribe('clickMenu', (menu: { event: string; data: any }) => {
       switch (menu.event) {
         case 'new':
           this.onNew();
@@ -340,7 +339,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       userId: '',
       shared: false
     };
-    this.storeService.set('file', this.data);
+    Store.set('file', this.data);
     this.canvas.open(this.data.data);
   }
 
@@ -351,7 +350,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.storeService.set('recently', {
+    Store.set('recently', {
       id: ret.id,
       fileId: ret.fileId || '',
       image: ret.image,
@@ -364,27 +363,22 @@ export class HomeComponent implements OnInit, OnDestroy {
       ret.id = '';
     }
     this.data = ret;
-    this.storeService.set('lineName', ret.data.lineName);
-    this.storeService.set('fromArrowType', ret.data.fromArrowType);
-    this.storeService.set('toArrowType', ret.data.toArrowType);
+    Store.set('lineName', ret.data.lineName);
+    Store.set('fromArrowType', ret.data.fromArrowType);
+    Store.set('toArrowType', ret.data.toArrowType);
     this.canvas.open(ret.data);
 
-    this.storeService.set('file', this.data);
+    Store.set('file', this.data);
 
     this.animateDemo();
   }
 
-  animateDemo(index = 1) {
+  animateDemo() {
     if (this.data.name === 'cube-demo') {
       const d = this.canvas.data();
       const n = Date.now();
       for (const item of d.nodes) {
-        if (+item.data === index) {
-          item.animateStart = n;
-        }
-      }
-      for (const item of d.lines) {
-        if (+item.data === index) {
+        if (item.tags.indexOf('1') > -1) {
           item.animateStart = n;
         }
       }
@@ -400,16 +394,16 @@ export class HomeComponent implements OnInit, OnDestroy {
       if (elem.files && elem.files[0]) {
         const name = elem.files[0].name.replace('.json', '');
         this.data.name = name;
-        this.storeService.set('file', this.data);
+        Store.set('file', this.data);
         const reader = new FileReader();
         reader.onload = (e: any) => {
           const text = e.target.result + '';
           try {
             const data = JSON.parse(text);
             if (data && Array.isArray(data.nodes) && Array.isArray(data.lines)) {
-              this.storeService.set('lineName', data.lineName);
-              this.storeService.set('fromArrowType', data.fromArrowType);
-              this.storeService.set('toArrowType', data.toArrowType);
+              Store.set('lineName', data.lineName);
+              Store.set('fromArrowType', data.fromArrowType);
+              Store.set('toArrowType', data.toArrowType);
               this.data = {
                 id: '',
                 fileId: '',
@@ -449,14 +443,14 @@ export class HomeComponent implements OnInit, OnDestroy {
       const ret = await this.service.Save(this.data);
       if (ret) {
         this.data.id = ret.id;
-        this.storeService.set('file', this.data);
+        Store.set('file', this.data);
         const _noticeService: NoticeService = new NoticeService();
         _noticeService.notice({
           body: '保存成功！',
           theme: 'success'
         });
 
-        this.storeService.set('recently', {
+        Store.set('recently', {
           id: this.data.id,
           fileId: this.data.fileId || '',
           image: this.data.image,
@@ -471,7 +465,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   async onSaveFilename(filename: string) {
     this.data.name = filename;
-    this.storeService.set('file', this.data);
+    Store.set('file', this.data);
 
     if (this.data.id) {
       if (
@@ -483,7 +477,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         return;
       }
 
-      this.storeService.set('recently', {
+      Store.set('recently', {
         id: this.data.id,
         fileId: this.data.fileId || '',
         image: this.data.image,
@@ -524,7 +518,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     this.data.shared = !this.data.shared;
-    this.storeService.set('file', this.data);
+    Store.set('file', this.data);
   }
 
   onCut() {
@@ -583,17 +577,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         break;
       case 'scale':
-        this.storeService.set('scale', data);
-        break;
-      case 'animateEnd':
-        if (data.data.data === '9') {
-          this.animateDemo(1);
-        } else {
-          this.animateDemo(+data.data.data + 1);
-        }
+        Store.set('scale', data);
         break;
       case 'locked':
-        this.storeService.set('locked', data);
+        Store.set('locked', data);
         break;
     }
     // console.log('onMessage:', event, data, this.selected);

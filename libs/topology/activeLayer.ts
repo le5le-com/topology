@@ -2,7 +2,7 @@ import { Node } from './models/node';
 import { Line } from './models/line';
 import { Rect } from './models/rect';
 import { Point } from './models/point';
-import { Store } from './store/store';
+import { Store } from 'le5le-store';
 import { Options } from './options';
 
 export class ActiveLayer {
@@ -407,6 +407,11 @@ export class ActiveLayer {
     }
 
     return found;
+  }
+
+  setLines(lines: Line[]) {
+    this.nodes = [];
+    this.lines = lines;
   }
 
   renderNodesLines() {

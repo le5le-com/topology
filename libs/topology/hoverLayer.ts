@@ -2,7 +2,7 @@ import { Rect } from './models/rect';
 import { Point } from './models/point';
 import { Line } from './models/line';
 import { Node } from './models/node';
-import { Store } from './store/store';
+import { Store } from 'le5le-store';
 import { drawLineFns } from './middles';
 
 export class HoverLayer {

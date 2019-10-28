@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { CookieService } from 'le5le-store';
+import { Cookie } from 'le5le-store';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -532,11 +532,11 @@ export class CoreService {
       options.expires = 365;
     }
 
-    CookieService.set(environment.token, data.token, options);
+    Cookie.set(environment.token, data.token, options);
   }
 
   removeToken() {
-    CookieService.delete(environment.token, {
+    Cookie.delete(environment.token, {
       domain: document.domain
         .split('.')
         .slice(-2)
