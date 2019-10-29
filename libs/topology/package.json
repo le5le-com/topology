@@ -16,12 +16,15 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Alsmile/topology.git"
+    "url": "git+https://github.com/le5le-com/topology.git"
   },
   "bugs": {
-    "url": "https://github.com/Alsmile/topology/issues"
+    "url": "https://github.com/le5le-com/topology/issues"
   },
-  "homepage": "https://github.com/Alsmile/topology#readme",
+  "homepage": "https://github.com/le5le-com/topology#readme",
+  "dependencies": {
+    "le5le-store": "^1.0.1"
+  },
   "devDependencies": {
     "typescript": "~3.4.3",
     "copyfiles": "latest"

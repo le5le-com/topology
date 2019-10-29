@@ -258,6 +258,17 @@ a:hover {
   }
 }
 
+.label {
+  background: #fff;
+  line-height: 1.8;
+  border: 1px solid $color-input-border;
+
+  .iconfont {
+    font-size: 0.12rem;
+    color: #777;
+  }
+}
+
 @media screen and (max-width: 760px) {
   .hide-mobile {
     display: none;

@@ -5,8 +5,14 @@ import { pointInRect } from "../middles/utils";
 import { start } from "repl";
 
 export abstract class Pen {
+<<<<<<< HEAD
   id = "";
   name = "";
+=======
+  id = '';
+  name = '';
+  tags: string[] = [];
+>>>>>>> 6dad5e3739b6eef7a136a99b42e402784e2dd3b6
   rect: Rect = new Rect(0, 0, 0, 0);
   lineWidth = 1;
   rotate = 0;
@@ -33,6 +39,7 @@ export abstract class Pen {
   // Cycle count. Infinite if <= 0.
   animateCycle: number;
   animateCycleIndex = 0;
+  nextAnimate: string;
 
   // For users.
   data: any;
@@ -45,7 +52,12 @@ export abstract class Pen {
   constructor(json?: any) {
     if (json) {
       this.id = json.id || s8();
+<<<<<<< HEAD
       this.name = json.name || "";
+=======
+      this.name = json.name || '';
+      this.tags = json.tags || [];
+>>>>>>> 6dad5e3739b6eef7a136a99b42e402784e2dd3b6
       if (json.rect) {
         this.rect = new Rect(
           json.rect.x,
@@ -65,7 +77,12 @@ export abstract class Pen {
         Object.assign(this.font, json.font);
       }
       this.animateCycle = json.animateCycle;
+<<<<<<< HEAD
       this.data = json.data || "";
+=======
+      this.nextAnimate = json.nextAnimate;
+      this.data = json.data || '';
+>>>>>>> 6dad5e3739b6eef7a136a99b42e402784e2dd3b6
     } else {
       this.id = s8();
     }

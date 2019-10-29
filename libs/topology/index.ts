@@ -4,8 +4,7 @@ import { Point } from './models/point';
 import { Line } from './models/line';
 import { drawNodeFns, drawLineFns } from './middles/index';
 import { Canvas } from './canvas';
-import { Store } from './store/store';
-import { Observer } from './store/observer';
+import { Store, Observer } from 'le5le-store';
 import { HoverLayer } from './hoverLayer';
 import { ActiveLayer } from './activeLayer';
 import { AnimateLayer } from './animateLayer';
@@ -181,20 +180,10 @@ export class Topology {
         return;
       }
       switch (e.type) {
-        case 'line':
-          for (const item of this.lines) {
-            if (item.id === e.data.id) {
-              item.animateStart = 0;
-              break;
-            }
-          }
-          break;
         case 'node':
-          // this.activeLayer.render();
           this.offscreen.render();
           break;
       }
-
       if (this.options.on) {
         this.options.on('animateEnd', e);
       }
@@ -276,7 +265,7 @@ export class Topology {
     const node = JSON.parse(event.dataTransfer.getData('Text'));
     node.rect.x = (event.offsetX - node.rect.width / 2) << 0;
     node.rect.y = (event.offsetY - node.rect.height / 2) << 0;
-    this.addNode(new Node(node));
+    this.addNode(new Node(node), true);
   }
 
   getTouchOffset(touch: Touch) {
@@ -300,11 +289,11 @@ export class Topology {
     this.touchedNode.rect.x = pos.offsetX - this.touchedNode.rect.width / 2;
     this.touchedNode.rect.y = pos.offsetY - this.touchedNode.rect.height / 2;
 
-    this.addNode(new Node(this.touchedNode));
+    this.addNode(new Node(this.touchedNode), true);
     this.touchedNode = undefined;
   }
 
-  addNode(node: Node): boolean {
+  addNode(node: Node, focus = false): boolean {
     if (!drawNodeFns[node.name]) {
       return false;
     }
@@ -314,8 +303,10 @@ export class Topology {
     }
 
     // New active.
-    this.activeLayer.setNodes([node]);
-    this.activeLayer.render();
+    if (focus) {
+      this.activeLayer.setNodes([node]);
+      this.activeLayer.render();
+    }
 
     this.hoverLayer.canvas.focus();
 
@@ -329,6 +320,36 @@ export class Topology {
     }
 
     return true;
+  }
+
+  addLine(line: Line, focus = false) {
+    // New active.
+    if (focus) {
+      this.activeLayer.setLines([line]);
+      this.activeLayer.render();
+    }
+
+    this.hoverLayer.canvas.focus();
+
+    this.lines.push(line);
+    this.offscreen.render();
+
+    this.cache();
+
+    if (this.options.on) {
+      this.options.on('line', line);
+    }
+  }
+
+  addLineByPt(name: string, from: Point, fromArrow: string, to: Point, toArrow: string, focus = false) {
+    const line = new Line({
+      name,
+      from,
+      fromArrow,
+      to,
+      toArrow
+    });
+    this.addLine(line, focus);
   }
 
   // Render or redraw
@@ -361,8 +382,12 @@ export class Topology {
       this.options.on('scale', this.scaleState);
     }
 
-    this.nodes.splice(0, this.nodes.length);
-    this.lines.splice(0, this.lines.length);
+    this.nodes = [];
+    this.lines = [];
+    Store.set('nodes', this.nodes);
+    Store.set('lines', this.lines);
+    this.offscreen.init();
+
     for (const item of data.nodes) {
       this.nodes.push(new Node(item));
     }
@@ -1641,7 +1666,6 @@ export class Topology {
 
     for (const item of this.nodes) {
       item.scale(scale, center);
-      this.activeLayer.updateChildren(item);
     }
 
     for (const item of this.lines) {
@@ -1671,6 +1695,12 @@ export class Topology {
   // scale for origin canvas:
   scaleTo(scale: number) {
     this.scale(scale / this.scaleState);
+  }
+
+  round() {
+    for (const item of this.nodes) {
+      item.round();
+    }
   }
 
   destory() {

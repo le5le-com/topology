@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
-import { StoreService } from 'le5le-store';
+import { Store } from 'le5le-store';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -54,47 +54,46 @@ export class AppComponent implements OnInit, OnDestroy {
   showLicense = false;
   showHelp = false;
   showAbout = false;
-  constructor(private storeService: StoreService, private router: Router, private activateRoute: ActivatedRoute) {}
+  constructor(private router: Router, private activateRoute: ActivatedRoute) {}
 
   ngOnInit() {
-    this.user = this.storeService.get('user');
-    this.storeService.get$('user').subscribe((user: any) => {
+    Store.subcribe('user', (user: any) => {
       this.user = user;
       this.getRecently();
     });
 
-    this.storeService.get$('file').subscribe((file: any) => {
+    Store.subcribe('file', (file: any) => {
       this.locked = 0;
       this.file = file;
       this.filename = file.name;
       this.editFilename = false;
     });
 
-    this.storeService.get$('lineName').subscribe((lineName: string) => {
+    Store.subcribe('lineName', (lineName: string) => {
       if (lineName) {
         this.lineName = lineName;
       }
     });
 
-    this.storeService.get$('fromArrowType').subscribe((fromArrowType: string) => {
+    Store.subcribe('fromArrowType', (fromArrowType: string) => {
       this.fromArrowType = fromArrowType || '';
     });
 
-    this.storeService.get$('toArrowType').subscribe((toArrowType: string) => {
+    Store.subcribe('toArrowType', (toArrowType: string) => {
       if (toArrowType !== undefined) {
         this.toArrowType = toArrowType || '';
       }
     });
 
-    this.storeService.get$('scale').subscribe((scale: number) => {
+    Store.subcribe('scale', (scale: number) => {
       this.scale = scale * 100;
     });
 
-    this.storeService.get$('locked').subscribe((locked: number) => {
+    Store.subcribe('locked', (locked: number) => {
       this.locked = locked;
     });
 
-    this.storeService.get$('recently').subscribe((item: any) => {
+    Store.subcribe('recently', (item: any) => {
       for (let i = 0; i < this.list.recently.length; ++i) {
         if (this.list.recently[i].id === item.id || i > 18) {
           this.list.recently.splice(i, 1);
@@ -123,8 +122,6 @@ export class AppComponent implements OnInit, OnDestroy {
         };
       }
     });
-
-    this.getRecently();
   }
 
   getRecently() {
@@ -159,7 +156,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     setTimeout(
       () => {
-        this.storeService.set('clickMenu', {
+        Store.set('clickMenu', {
           event: menu,
           data
         });
@@ -215,7 +212,7 @@ export class AppComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.storeService.set('clickMenu', {
+    Store.set('clickMenu', {
       event: 'filename',
       data: this.filename
     });
@@ -239,7 +236,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.menuClicked = false;
     }, 500);
 
-    this.storeService.set('clickMenu', {
+    Store.set('clickMenu', {
       event: 'lineName',
       data: this.lineName
     });
@@ -252,7 +249,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.menuClicked = false;
     }, 500);
 
-    this.storeService.set('clickMenu', {
+    Store.set('clickMenu', {
       event: 'fromArrowType',
       data: this.fromArrowType
     });
@@ -265,7 +262,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.menuClicked = false;
     }, 500);
 
-    this.storeService.set('clickMenu', {
+    Store.set('clickMenu', {
       event: 'toArrowType',
       data: this.toArrowType
     });
@@ -280,7 +277,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onSignout() {
-    this.storeService.set('auth', -1);
+    Store.set('auth', -1);
   }
 
   ngOnDestroy() {}

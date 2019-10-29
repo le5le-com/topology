@@ -1,7 +1,7 @@
 import { Node } from '../../models/node';
 import { Rect } from '../../models/rect';
 import { getLines, getWords } from './text';
-import { Store } from '../../store/store';
+import { Store } from 'le5le-store';
 
 const txtMarginTop = 5;
 const minSize = 30;

@@ -24,6 +24,8 @@ export class PropsComponent implements OnInit, OnChanges {
   icon: any;
   drowdown = 0;
 
+  tag = '';
+
   fontStyleOptions = {
     id: 'id',
     name: 'name',

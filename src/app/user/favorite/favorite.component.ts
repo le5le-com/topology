@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { StoreService } from 'le5le-store';
+import { Store } from 'le5le-store';
 import { NoticeService } from 'le5le-components/notice';
 
 import { UserFavoriteService } from './favorite.service';

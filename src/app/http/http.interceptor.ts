@@ -12,17 +12,17 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { NoticeService } from 'le5le-components/notice';
-import { CookieService, StoreService } from 'le5le-store';
+import { Cookie, Store } from 'le5le-store';
 import { environment } from 'src/environments/environment';
 import { CoreService } from '../core/core.service';
 
 @Injectable()
 export class AppHttpInterceptor implements HttpInterceptor {
-  constructor(protected store: StoreService, protected coreService: CoreService) {}
+  constructor(protected coreService: CoreService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const authReq = req.clone({
-      headers: req.headers.set('Authorization', CookieService.get(environment.token))
+      headers: req.headers.set('Authorization', Cookie.get(environment.token))
     });
     return next.handle(authReq).pipe(
       tap(
@@ -49,7 +49,7 @@ export class AppHttpInterceptor implements HttpInterceptor {
         // Operation failed; error is an HttpErrorResponse
         (error: HttpErrorResponse) => {
           if (error.status === 401) {
-            this.store.set('auth', -1);
+            Store.set('auth', -1);
             if (error.url.indexOf('/api/user/profile') < 0) {
               const noticeService: NoticeService = new NoticeService();
               noticeService.notice({
@@ -58,7 +58,7 @@ export class AppHttpInterceptor implements HttpInterceptor {
               });
             }
           } else if (error.status === 403) {
-            this.store.set('redirect', '/');
+            Store.set('redirect', '/');
           } else if (error.status === 504) {
             const _noticeService: NoticeService = new NoticeService();
             _noticeService.notice({

@@ -5,8 +5,7 @@ import { Node } from '../../libs/topology/models/node';
 import { Point } from '../../libs/topology/models/point';
 import { Line } from '../../libs/topology/models/line';
 import { Rect } from '../../libs/topology/models/rect';
-import { Store } from '../../libs/topology/store/store';
-import { Observer } from '../../libs/topology/store/observer';
+import { Store, Observer } from 'le5le-store';
 import { s8 } from '../../libs/topology/uuid/uuid';
 
 import {

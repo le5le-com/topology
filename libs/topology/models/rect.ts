@@ -63,4 +63,14 @@ export class Rect {
     this.ey = this.y + this.height;
     this.calceCenter();
   }
+
+  round() {
+    this.x = Math.round(this.x);
+    this.y = Math.round(this.y);
+    this.width = Math.round(this.width);
+    this.height = Math.round(this.height);
+    this.ex = this.x + this.width;
+    this.ey = this.y + this.height;
+    this.calceCenter();
+  }
 }

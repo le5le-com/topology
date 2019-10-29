@@ -2,7 +2,7 @@ import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
-import { StoreService, CookieService } from 'le5le-store';
+import { Store, Cookie } from 'le5le-store';
 import { NoticeService } from 'le5le-components/notice';
 
 import { HttpService } from '../http/http.service';
@@ -23,7 +23,6 @@ export class CoreModule {
     @SkipSelf()
     parentModule: CoreModule,
     private _router: Router,
-    private _storeService: StoreService,
     private _httpService: HttpService,
     private _coreService: CoreService
   ) {
@@ -31,19 +30,19 @@ export class CoreModule {
       throw new Error('CoreModule is already loaded. Import it in the AppModule only');
     }
 
-    this._storeService.set('author', 'alsmile123@qq.com');
+    Store.set('author', 'alsmile123@qq.com');
 
     // 监听用户认证
-    this._storeService.get$('auth').subscribe((ret: any) => {
+    Store.subcribe('auth', (ret: any) => {
       // 认证失败
       if (ret === -1) {
         this._coreService.removeToken();
-        this._storeService.set('user', null);
+        Store.set('user', null);
       }
     });
 
     // 监听是否需要重定向
-    this._storeService.get$('redirect').subscribe((ret: string) => {
+    Store.subcribe('redirect', (ret: string) => {
       if (ret) {
         this._router.navigateByUrl(ret);
       }
@@ -63,8 +62,8 @@ export class CoreModule {
     // 连接websocket
     const wsUrl: string = (location.protocol === 'http:' ? 'ws://' : 'wss://') + location.host + '/ws';
     this.socket = new WebSocket(wsUrl);
-    this._storeService.set('socket', this.socket);
-    this._storeService.set('socketCallback', this.socketCallback);
+    Store.set('socket', this.socket);
+    Store.set('socketCallback', this.socketCallback);
     this.socket.onmessage = (e: any) => {
       if (!e.data) {
         return;
@@ -77,7 +76,7 @@ export class CoreModule {
     };
 
     this.socket.onopen = (event: any) => {
-      this.socket.send(JSON.stringify({ event: 'token', data: CookieService.get(environment.token) }));
+      this.socket.send(JSON.stringify({ event: 'token', data: Cookie.get(environment.token) }));
     };
 
     this.socket.onclose = (event: any) => {
@@ -102,7 +101,7 @@ export class CoreModule {
     }
 
     ret.usernamePinyin = this._coreService.getPinyin(ret.username);
-    this._storeService.set('user', ret);
+    Store.set('user', ret);
     this.initWebsocket();
   }
 }
