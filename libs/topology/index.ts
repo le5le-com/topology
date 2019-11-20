@@ -529,7 +529,7 @@ export class Topology {
 
       this.render();
     });
-  };
+  }
 
   private setNodeText() {
     this.inputNode.text = this.input.value;
@@ -542,7 +542,10 @@ export class Topology {
   }
 
   private onmousedown = (e: MouseEvent) => {
-    this.mouseDown = { x: e.offsetX, y: e.offsetY };
+    if (e.which === 1) {
+      this.mouseDown = { x: e.offsetX, y: e.offsetY };
+    }
+
     Store.set('activeLine', null);
 
     if (e.altKey) {
@@ -816,7 +819,7 @@ export class Topology {
 
     this.render();
     this.cache();
-  };
+  }
 
   private getMoveIn(pt: Point) {
     this.lastHoverNode = this.moveIn.hoverNode;
