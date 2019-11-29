@@ -195,7 +195,7 @@ export class Topology {
         return;
       }
       event.preventDefault();
-      this.animateLayer.forbid();
+
       if (event.deltaY < 0) {
         this.scale(1.1);
       } else {
@@ -203,7 +203,7 @@ export class Topology {
       }
 
       this.divLayer.canvas.focus();
-      this.animateLayer.unforbid();
+
       return false;
     };
 
@@ -420,7 +420,6 @@ export class Topology {
     }
 
     if ((e.ctrlKey || e.altKey) && this.mouseDown) {
-      this.animateLayer.forbid();
       this.translate(e.offsetX - this.mouseDown.x, e.offsetY - this.mouseDown.y, true);
       return false;
     }
@@ -470,7 +469,7 @@ export class Topology {
         }
         return;
       }
-      this.animateLayer.forbid();
+
       // Move out parent element.
       const moveOut =
         pos.x + 50 > this.parentElem.clientWidth + this.parentElem.scrollLeft ||
@@ -743,8 +742,7 @@ export class Topology {
       this.cache();
     }
     this.nodesMoved = false;
-    this.animateLayer.unforbid();
-  }
+  };
 
   private ondblclick = (e: MouseEvent) => {
     switch (this.moveIn.type) {
@@ -760,7 +758,7 @@ export class Topology {
         }
         break;
     }
-  }
+  };
 
   private clickText(node: Node, pos: Point): { node: Node; textRect: Rect } {
     const textRect = node.getTextRect();

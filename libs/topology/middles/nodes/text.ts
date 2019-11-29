@@ -1,5 +1,4 @@
 import { Node } from '../../models/node';
-import { Line } from '../../models/line';
 
 // getWords: Get the word array from text. A single Chinese character is a word.
 export function getWords(txt: string) {
@@ -78,7 +77,7 @@ export function fillText(
   }
 }
 
-export function text(ctx: CanvasRenderingContext2D, node: Node | Line) {
+export function text(ctx: CanvasRenderingContext2D, node: Node) {
   if (!node.text) {
     return;
   }

@@ -1,11 +1,9 @@
 import { Pen } from './pen';
-import { Rect } from './rect';
 import { Point } from './point';
 import { drawLineFns, drawArrowFns } from '../middles';
 import { getBezierPoint } from '../middles/lines/curve';
 import { Store } from 'le5le-store';
 import { lineLen, curveLen } from '../utils';
-import { text } from '../middles/nodes/text';
 
 export class Line extends Pen {
   from: Point;
@@ -17,16 +15,11 @@ export class Line extends Pen {
   length: number;
 
   borderWidth = 0;
-  borderColor = '#000';
-
-  text: string;
-  textMaxLine: number;
-  textRect: Rect;
+  borderColor = '#000000';
 
   animateColor = '';
   animateSpan = 1;
   animatePos = 0;
-  bubbles: Point[] = [];
   constructor(json?: any) {
     super(json);
 
@@ -55,27 +48,20 @@ export class Line extends Pen {
         this.borderColor = json.borderColor;
         this.borderWidth = json.borderWidth;
       }
-      this.text = json.text;
-      if (json.textMaxLine) {
-          this.textMaxLine = +json.textMaxLine || 0;
-      }
     } else {
       this.name = 'curve';
       this.fromArrow = 'triangleSolid';
     }
-    this.initTextRect();
   }
 
   setFrom(from: Point, fromArrow: string = '') {
     this.from = from;
     this.fromArrow = fromArrow;
-    this.initTextRect();
   }
 
   setTo(to: Point, toArrow: string = 'triangleSolid') {
     this.to = to;
     this.toArrow = toArrow;
-    this.initTextRect();
   }
 
   calcControlPoints() {
@@ -85,19 +71,6 @@ export class Line extends Pen {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    if (this.bubbles.length) {
-      const tailWidth = 4 + this.lineWidth;
-      for (let i = 0, l = this.bubbles.length; i < l; i++) {
-        const p = this.bubbles[i];
-        ctx.save();
-        ctx.beginPath();
-        ctx.fillStyle = this.strokeStyle;
-        ctx.arc(p.x, p.y, tailWidth * (l - i) / l / 2, 0, 2 * Math.PI, false);
-        ctx.fill();
-        ctx.restore();
-      }
-      return;
-    }
     if (this.borderWidth > 0 && this.borderColor) {
       ctx.save();
       ctx.lineWidth = this.lineWidth + this.borderWidth;
@@ -147,78 +120,6 @@ export class Line extends Pen {
       drawArrowFns[this.toArrow](ctx, f, this.to, scale);
       ctx.restore();
     }
-    // Draw text.
-    if (this.text) {
-      this.initTextRect();
-      ctx.save();
-      ctx.shadowColor = '';
-      ctx.shadowBlur = 0;
-      text(ctx, this);
-      ctx.restore();
-    }
-  }
-  initTextRect() {
-    if (!this.from || !this.to || !this.text) {
-      return;
-    }
-    const width = 100, heigth = this.font.lineHeight * this.font.fontSize;
-    const point = this.getPointByLength(this.getLen() / 2);
-    this.textRect = new Rect(point.x - width / 2, point.y - heigth / 2, width, heigth);
-  }
-
-  getPointByLength(len: number): Point {
-    if (len <= 0) {
-      return this.from;
-    }
-    let x: number, y: number;
-    switch (this.name) {
-      case 'line':
-        return this.getLinePoint(this.from, this.to, len);
-      case 'polyline':
-        if (!this.controlPoints || !this.controlPoints.length) {
-          return this.getLinePoint(this.from, this.to, len);
-        } else {
-          const points = [].concat(this.controlPoints, this.to);
-          let curPt = this.from;
-          for (const pt of points) {
-            const l = lineLen(curPt, pt);
-            if (len > l) {
-              len -= l;
-              curPt = pt;
-            } else {
-              return this.getLinePoint(curPt, pt, len);
-            }
-          }
-          return this.to;
-        }
-      case 'curve':
-        const length = this.getLen();
-        const from = this.from, to = this.to, cp1 = this.controlPoints[0], cp2 = this.controlPoints[1];
-        // tslint:disable-next-line:max-line-length
-        x = from.x * Math.pow((1 - len / length), 3) + 3 * cp1.x * (len / length) * Math.pow((1 - len / length), 2) + 3 * cp2.x * Math.pow((len / length), 2) * (1 - len / length) + to.x * Math.pow((len / length), 3);
-        // tslint:disable-next-line:max-line-length
-        y = from.y * Math.pow((1 - len / length), 3) + 3 * cp1.y * (len / length) * Math.pow((1 - len / length), 2) + 3 * cp2.y * Math.pow((len / length), 2) * (1 - len / length) + to.y * Math.pow((len / length), 3);
-        break;
-    }
-    return new Point(x, y);
-  }
-
-  getLinePoint(from: Point, to: Point, len: number) {
-    const length = lineLen(from, to);
-    if (len <= 0) {
-      return from;
-    }
-    if (len >= length) {
-      return to;
-    }
-    let x: number, y: number;
-    x = from.x + (to.x - from.x) * (len / length);
-    y = from.y + (to.y - from.y) * (len / length);
-    return new Point(x, y);
-  }
-
-  getTextRect() {
-    return this.textRect;
   }
 
   pointIn(pt: Point) {
@@ -252,21 +153,9 @@ export class Line extends Pen {
 
   animate() {
     this.animatePos += this.animateSpan;
-    if (this.bubbles.length > 0) {
-       this.bubbles = [];
-    }
-    if (+this.animateType === 1) {
+    if (this.animateType) {
       this.lineDashOffset = -this.animatePos;
       this.lineDash = [this.lineWidth, this.lineWidth * 2];
-    } else if (+this.animateType === 2) {
-      if (this.lineDash) {
-        this.lineDash = null;
-      }
-      const tailLength = 30;
-      for (let i = 0; i < tailLength; i++) {
-        const curPt = this.getPointByLength(this.animatePos - i * (this.animateSpan + 1));
-        this.bubbles.push(curPt);
-      }
     } else {
       this.lineDash = [this.animatePos, this.length - this.animatePos + 1];
     }
