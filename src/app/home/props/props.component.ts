@@ -201,6 +201,10 @@ export class PropsComponent implements OnInit, OnChanges {
       {
         id: '1',
         name: '水珠流动'
+      },
+      {
+        id: '2',
+        name: '流星'
       }
     ]
   };

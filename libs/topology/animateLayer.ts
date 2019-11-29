@@ -12,6 +12,7 @@ export class AnimateLayer {
 
   private last = Date.now();
   private timer: any;
+  private forbidAnimate = false;
   constructor(public options: Options = {}) {
     Store.set('LT:AnimateLayer', this);
 
@@ -21,6 +22,7 @@ export class AnimateLayer {
   }
 
   start(clear = true) {
+    this.forbidAnimate = false;
     if (this.timer) {
       cancelAnimationFrame(this.timer);
     }
@@ -107,6 +109,9 @@ export class AnimateLayer {
     }
 
     this.timer = requestAnimationFrame(() => {
+      if (this.forbidAnimate) {
+        return;
+      }
       const now = Date.now();
       const interval = now - this.last;
       this.last = now;
@@ -193,6 +198,18 @@ export class AnimateLayer {
   destroy() {
     if (this.timer) {
       cancelAnimationFrame(this.timer);
+    }
+  }
+
+  forbid() {
+    this.nodes = [];
+    this.lines = [];
+    this.forbidAnimate = true;
+  }
+
+  unforbid() {
+    if (this.forbidAnimate) {
+      this.start();
     }
   }
 }
