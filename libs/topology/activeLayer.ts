@@ -71,6 +71,14 @@ export class ActiveLayer {
       if (this.options.hideRotateCP) {
         this.rotateCPs = [new Point(-1000, -1000), new Point(-1000, -1000)];
       }
+      if (this.options.hideControlPoints) {
+        this.sizeCPs = [
+          new Point(-1000, -1000),
+          new Point(-1000, -1000),
+          new Point(-1000, -1000),
+          new Point(-1000, -1000)
+        ]
+      }
 
       return;
     }

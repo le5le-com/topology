@@ -18,6 +18,7 @@ export interface Options {
   rotateCursor?: string;
   hideInput?: boolean;
   hideRotateCP?: boolean;
+  hideControlPoints?: boolean;
   disableEmptyLine?: boolean;
   playIcon?: string;
   pauseIcon?: string;
