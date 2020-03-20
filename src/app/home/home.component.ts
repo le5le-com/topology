@@ -73,7 +73,18 @@ export class HomeComponent implements OnInit, OnDestroy {
     private router: Router,
     private activateRoute: ActivatedRoute,
     private http: HttpClient
-  ) { }
+  ) {
+    let resizeTimer = null;
+    window.onresize = function () {
+      if (resizeTimer) {
+        clearTimeout(resizeTimer);
+      }
+      resizeTimer = setTimeout(function () {
+        this.canvas.resize();
+        this.canvas.overflow();
+      }, 100)
+    }
+   }
 
   ngOnInit() {
     this.user = Store.get('user');
