@@ -47,7 +47,8 @@ export class Canvas {
       if (this.options.height && this.options.height !== 'auto') {
         this.height = +this.options.height;
       } else {
-        this.height = this.parentElem.clientHeight - 8;
+        //fix canvas height
+        this.height = this.parentElem.clientHeight;
       }
     }
 

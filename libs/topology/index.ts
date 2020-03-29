@@ -446,9 +446,16 @@ export class Topology {
 
   overflow() {
     const rect = this.getRect();
-    if (rect.ex > this.canvas.width || rect.ey > this.canvas.height) {
-      this.resize({ width: rect.ex + 200, height: rect.ey + 200 });
+    let { width, height } = this.canvas;
+    const { ex, ey } = rect;
+    //fix Canvas cannot fill the entire parent node container
+    if (ex > width) {
+      width = ex + 200;
     }
+    if (ey > height) {
+      height = ey + 200;
+    }
+    this.resize({ width, height });
   }
 
   private onMouseMove = (e: MouseEvent) => {
