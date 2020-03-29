@@ -17,7 +17,7 @@ import { DivLayer } from './divLayer';
 import { Rect } from './models/rect';
 import { s8 } from './uuid/uuid';
 import { getBezierPoint } from './middles/lines/curve';
-import { pointInRect } from './utils';
+import { pointInRect, extend } from './utils';
 
 const resizeCursors = ['nw-resize', 'ne-resize', 'se-resize', 'sw-resize'];
 enum MoveInType {
@@ -39,6 +39,28 @@ interface ICaches {
 }
 
 const dockOffset = 10;
+
+const DEFAULTOPTIONS: Options = {
+  font: {
+    color: '#222',
+    fontFamily: '"Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial',
+    fontSize: 12,
+    lineHeight: 1.5,
+    textAlign: 'center',
+    textBaseline: 'middle'
+  },
+  color: '#222',
+  hoverColor: '#d4380d',
+  dragColor: '#d4380d',
+  activeColor: '#d4380d',
+  rotateCursor: '/assets/img/rotate.cur',
+  hideInput: false,
+  hideRotateCP: false,
+  hideSizeCP: false,
+  disableScale: false,
+  disableEmptyLine: false,
+  autoDrawLine: true
+}
 
 export class Topology {
   data: TopologyData = new TopologyData();
@@ -97,48 +119,7 @@ export class Topology {
   private scrolling = false;
   constructor(parent: string | HTMLElement, options?: Options) {
     Store.set('topology-data', this.data);
-    this.options = options || {};
-
-    if (!this.options.font) {
-      this.options.font = {
-        color: '#222',
-        fontFamily: '"Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial',
-        fontSize: 12,
-        lineHeight: 1.5,
-        textAlign: 'center',
-        textBaseline: 'middle'
-      };
-    }
-
-    if (!this.options.color) {
-      this.options.color = '#222';
-    }
-    if (!this.options.rotateCursor) {
-      this.options.rotateCursor = '/assets/img/rotate.cur';
-    }
-
-    if (!this.options.font.fontFamily) {
-      this.options.font.fontFamily = '"Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial';
-    }
-
-    if (!this.options.font.color) {
-      this.options.font.color = '#222';
-    }
-    if (!this.options.font.fontSize) {
-      // px
-      this.options.font.fontSize = 12;
-    }
-    if (!this.options.font.lineHeight) {
-      // number
-      this.options.font.lineHeight = 1.5;
-    }
-    if (!this.options.font.textAlign) {
-      this.options.font.textAlign = 'center';
-    }
-    if (!this.options.font.textBaseline) {
-      this.options.font.textBaseline = 'middle';
-    }
-
+    this.options = extend({}, DEFAULTOPTIONS, options);
     if (typeof parent === 'string') {
       this.parentElem = document.getElementById(parent);
     } else {
@@ -1064,6 +1045,7 @@ export class Topology {
         return n;
       }
     }
+    const autoDrawLine = this.options.autoDrawLine;
 
     if (node.hit(pt)) {
       this.moveIn.hoverNode = node;
@@ -1078,18 +1060,19 @@ export class Topology {
       if (node.rect.width < 20 || node.rect.height < 20) {
         return node;
       }
-
-      for (let j = 0; j < node.rotatedAnchors.length; ++j) {
-        if (node.rotatedAnchors[j].hit(pt, 5)) {
-          if (!this.mouseDown && node.rotatedAnchors[j].mode === AnchorMode.In) {
-            continue;
+      if (autoDrawLine) {
+        for (let j = 0; j < node.rotatedAnchors.length; ++j) {
+          if (node.rotatedAnchors[j].hit(pt, 5)) {
+            if (!this.mouseDown && node.rotatedAnchors[j].mode === AnchorMode.In) {
+              continue;
+            }
+            this.moveIn.hoverNode = node;
+            this.moveIn.type = MoveInType.HoverAnchors;
+            this.moveIn.hoverAnchorIndex = j;
+            this.hoverLayer.hoverAnchorIndex = j;
+            this.divLayer.canvas.style.cursor = 'crosshair';
+            return node;
           }
-          this.moveIn.hoverNode = node;
-          this.moveIn.type = MoveInType.HoverAnchors;
-          this.moveIn.hoverAnchorIndex = j;
-          this.hoverLayer.hoverAnchorIndex = j;
-          this.divLayer.canvas.style.cursor = 'crosshair';
-          return node;
         }
       }
 
@@ -1100,17 +1083,19 @@ export class Topology {
       if (this.data.locked || node.locked) {
         return node;
       }
-      for (let j = 0; j < node.rotatedAnchors.length; ++j) {
-        if (node.rotatedAnchors[j].hit(pt, 5)) {
-          if (!this.mouseDown && node.rotatedAnchors[j].mode === AnchorMode.In) {
-            continue;
+      if (autoDrawLine) {
+        for (let j = 0; j < node.rotatedAnchors.length; ++j) {
+          if (node.rotatedAnchors[j].hit(pt, 5)) {
+            if (!this.mouseDown && node.rotatedAnchors[j].mode === AnchorMode.In) {
+              continue;
+            }
+            this.moveIn.hoverNode = node;
+            this.moveIn.type = MoveInType.HoverAnchors;
+            this.moveIn.hoverAnchorIndex = j;
+            this.hoverLayer.hoverAnchorIndex = j;
+            this.divLayer.canvas.style.cursor = 'crosshair';
+            return node;
           }
-          this.moveIn.hoverNode = node;
-          this.moveIn.type = MoveInType.HoverAnchors;
-          this.moveIn.hoverAnchorIndex = j;
-          this.hoverLayer.hoverAnchorIndex = j;
-          this.divLayer.canvas.style.cursor = 'crosshair';
-          return node;
         }
       }
     }

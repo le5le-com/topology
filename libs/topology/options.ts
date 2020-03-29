@@ -36,4 +36,5 @@ export interface Options {
   translateKey?: KeyType;
   scaleKey?: KeyType;
   on?: (event: string, data: any) => void;
+  autoDrawLine?: boolean
 }

@@ -165,3 +165,14 @@ export function loadJS(url: string, callback?: () => void, render?: boolean) {
 
   document.body.appendChild(loaderScript);
 }
+
+//merge options
+export function extend(target: Object, ...source: Object[]) {
+  for (let i = 0; i < source.length; i++) {
+    const src = source[i];
+    for (const k in src) {
+      target[k] = src[k];
+    }
+  }
+  return target;
+}
