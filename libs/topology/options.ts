@@ -7,6 +7,7 @@ export enum KeyType {
 }
 
 export interface Options {
+  locked ?: number;
   extDpiRatio?: number;
   width?: string | number;
   height?: string | number;

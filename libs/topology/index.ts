@@ -412,7 +412,7 @@ export class Topology {
 
     this.animateLayer.nodes = [];
     this.animateLayer.lines = [];
-    this.lock(data.locked || Lock.None);
+    this.lock(data.locked || this.options.locked || Lock.None);
 
     if (data.lineName) {
       this.data.lineName = data.lineName;
