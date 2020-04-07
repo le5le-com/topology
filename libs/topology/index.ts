@@ -18,6 +18,7 @@ import { Rect } from './models/rect';
 import { s8 } from './uuid/uuid';
 import { getBezierPoint } from './middles/lines/curve';
 import { pointInRect } from './utils';
+import { diffData } from './diff';
 
 const resizeCursors = ['nw-resize', 'ne-resize', 'se-resize', 'sw-resize'];
 enum MoveInType {
@@ -1376,8 +1377,14 @@ export class Topology {
     if (this.caches.index < this.caches.list.length - 1) {
       this.caches.list.splice(this.caches.index + 1, this.caches.list.length - this.caches.index - 1);
     }
-    const data = new TopologyData(this.data);
-    this.caches.list.push(data);
+    if (this.caches.list.length === 0) {
+      const data = new TopologyData(this.data);
+      this.caches.list.push(data);
+    } else {
+      const len = this.caches.list.length;
+      const data = diffData(this.caches.list[len - 1], this.data);
+      this.caches.list.push(data);
+    }
     if (this.caches.list.length > this.options.cacheLen) {
       this.caches.list.shift();
     }
