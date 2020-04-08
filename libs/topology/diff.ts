@@ -25,7 +25,8 @@ export function diffData(oldData: TopologyData, newData: TopologyData): Topology
     }).filter(d => {
       // N - indicates a newly added property/element
       if (d.kind === 'N') {
-        return (d.rhs !== undefined) && (d.rhs !== null);
+        //ignore null value,ignore textRect new
+        return (d.rhs !== undefined) && (d.rhs !== null) && (!d.path.includes('textRect'));
       } else {
         // D - indicates a property/element was deleted
         // E - indicates a property/element was edited
