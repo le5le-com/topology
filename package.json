@@ -24,7 +24,6 @@
     "@angular/platform-browser-dynamic": "~8.0.1",
     "@angular/router": "~8.0.1",
     "core-js": "^2.5.4",
-    "deep-diff": "^1.0.2",
     "file-saver": "^2.0.2",
     "le5le-components": "^0.8.8",
     "le5le-store": "^1.0.2",
@@ -32,14 +31,14 @@
     "ngresizable": "^1.0.0",
     "ngx-color-picker": "^8.1.0",
     "rxjs": "~6.4.0",
+    "ts-clipboard": "^1.0.15",
+    "tslib": "^1.9.0",
+    "zone.js": "~0.9.1",
     "topology-activity-diagram": "^0.0.4",
     "topology-class-diagram": "^0.0.1",
     "topology-core": "^0.0.10",
     "topology-flow-diagram": "^0.0.1",
-    "topology-sequence-diagram": "^0.0.4",
-    "ts-clipboard": "^1.0.15",
-    "tslib": "^1.9.0",
-    "zone.js": "~0.9.1"
+    "topology-sequence-diagram": "^0.0.4"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.800.0",

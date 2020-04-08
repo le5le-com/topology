@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/le5le-com/topology#readme",
   "dependencies": {
+    "deep-diff": "^1.0.2",
     "le5le-store": "^1.0.2"
   },
   "devDependencies": {
