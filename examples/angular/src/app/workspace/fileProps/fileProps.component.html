@@ -1,0 +1,123 @@
+<div class="title">项目设置</div>
+<div class="ph15 pv10">
+
+  <div class="flex middle mb10">
+    <label>文件类型：</label>
+    <span class="label" [style.background-color]="data.component? '#1890ff' : '#f3f3f3'"
+      [style.color]="data.component? '#fff' : ''">{{data.component? '组件' : '图文'}}</span>
+  </div>
+
+  <div class="flex middle mb10">
+    <label>文件名称：</label>
+    <div class="full pr10">
+      <input class="input" [(ngModel)]="data.name">
+    </div>
+  </div>
+
+  <div *ngIf="canvas && !data.component">
+    <div class="flex middle mb10 input-line">
+      <label>背景颜色：</label>
+      <div class="input color" [class.readonly]="canvas.data.locked">
+        <i [(colorPicker)]="canvas.data.bkColor" [style.background]="canvas.data.bkColor" cpPosition="bottom"
+          cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"
+          (colorPickerChange)="canvas.render()"></i>
+        <input [(ngModel)]="canvas.data.bkColor" [readonly]="canvas.data.locked" (change)="canvas.render()" />
+      </div>
+    </div>
+
+    <div class="flex middle mb10 input-line">
+      <label>背景图片：</label>
+      <div class="pointer icon" (click)="show.imageDlg = true">
+        <img *ngIf="canvas.data.bkImage" [src]="canvas.data.bkImage" style="height: .3rem" />
+        <div *ngIf="!canvas.data.bkImage" class="image-upload">
+          <i class="iconfont icon-add inline"></i>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="show.imageDlg" class="tools">
+      <div class="title flex">
+        <label class="full">选择图片</label>
+        <a (click)="show.imageDlg=false">返回</a>
+      </div>
+      <app-user-images class="block p10" [(image)]="canvas.data.bkImage" (imageChange)="onChangeBkImage()"
+        style="height: calc(100% - .4rem);overflow: auto;">
+      </app-user-images>
+    </div>
+  </div>
+
+  <div *ngIf="canvas" class="flex middle">
+    <label>背景网格：</label>
+    <div>
+      <ui-switch class="inline ml5" [(checked)]="canvas.data.grid" (change)="onGrid()"></ui-switch>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="canvas && !data.component">
+  <div class="title">Websocket地址</div>
+  <div class="ph15 pv10">
+    <input class="input full" [(ngModel)]="canvas.data.websocket" placeholder="websocket url地址">
+    <div class="gray mt5" style="line-height: 1.5;">
+      用于Pen“事件”中的websocket使用。消息格式为json字符串：{{'{event, data}'}}
+    </div>
+  </div>
+</div>
+
+<div class="title">排版</div>
+<div class="ph15 pv5">
+  <div class="flex middle mb10">
+    <label>最大宽度：</label>
+    <div class="full pr10">
+      <input type="number" class="input" [(ngModel)]="layout.maxWidth" title="超出最大宽度换行">
+    </div>
+  </div>
+  <div class="flex middle mb10">
+    <label>节点宽度：</label>
+    <div class="full pr10">
+      <input type="number" class="input" [(ngModel)]="layout.nodeWidth" title="固定每个节点的宽度">
+    </div>
+  </div>
+  <div class="flex middle mb10">
+    <label>节点高度：</label>
+    <div class="full pr10">
+      <input type="number" class="input" [(ngModel)]="layout.nodeHeight" title="固定每个节点的高度">
+    </div>
+  </div>
+  <div class="flex middle mb10">
+    <label>水平个数：</label>
+    <div class="full pr10">
+      <input type="number" class="input" [(ngModel)]="layout.maxCount" title="超出最大个数，将自动计算水平间距（下面水平间距设置将无效）">
+    </div>
+  </div>
+  <div class="flex middle mb10">
+    <label>水平间距：</label>
+    <div class="full pr10">
+      <input type="number" class="input" [(ngModel)]="layout.spaceWidth" title="节点之间水平间距（px）">
+    </div>
+  </div>
+  <div class="flex middle mb10">
+    <label>垂直间距：</label>
+    <div class="full pr10">
+      <input type="number" class="input" [(ngModel)]="layout.spaceHeight" title="节点之间垂直间距（px）">
+    </div>
+  </div>
+  <div class="flex middle">
+    <label></label>
+    <div class="full pr10">
+      <button class="button primary" (click)="onLayout()">开始排版</button>
+    </div>
+  </div>
+</div>
+
+
+<div>
+  <div class="title mt10">
+    小提示
+  </div>
+  <ul class="ml30 mv10">
+    <li>方向键：控制节点移动5个像素</li>
+    <li>Ctrl + 方向键：控制节点移动1个像素</li>
+    <li>Ctrl + 鼠标移动：移动整个画布</li>
+    <li>Ctrl + 鼠标滚轮：缩放</li>
+  </ul>
+</div>

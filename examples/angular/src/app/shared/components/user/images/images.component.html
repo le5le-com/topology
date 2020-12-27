@@ -1,0 +1,38 @@
+<div *ngIf="tool">
+  <div class="nowrap" style="line-height: 1;">
+    <button class="button primary mr5" (click)="onImageUpload()">
+      上传图片
+    </button>
+    <button class="button primary" (click)="onImageUrl()">
+      在线图片
+    </button>
+  </div>
+  <div class="flex wrap small">
+    <div class="image text" [class.active]="!image" (click)="onClickImage({})">空</div>
+    <div class="image" *ngFor="let item of images; let i = index" [class.active]="item.image === image" draggable="true"
+      (dragstart)="onDrag($event, item)" (touchstart)="onTouchstart(item)">
+      <img [uiImageLazyLoad]="item.image" parentDom="tools" />
+      <i class="iconfont icon-close" title="从图片库中移除，但不删除图片" (click)="onRemoveImage($event, item, i)"></i>
+    </div>
+  </div>
+
+</div>
+<div *ngIf="!tool">
+  <div style="line-height: 1;">
+    <button class="button primary ml5 mr10" (click)="onImageUpload()">
+      上传图片
+    </button>
+    <button class="button primary" (click)="onImageUrl()">
+      在线图片
+    </button>
+  </div>
+  <div class="flex wrap">
+    <div class="image text" [class.active]="!image" (click)="onClickImage({})">空</div>
+    <div class="image" *ngFor="let item of images; let i = index" [class.active]="item.image === image"
+      (click)="onClickImage(item)">
+      <img [uiImageLazyLoad]="item.image" [parentDom]="el.nativeElement" />
+      <i class="iconfont icon-close" title="从图片库中移除，但不删除图片" (click)="onRemoveImage($event, item, i)"></i>
+    </div>
+  </div>
+
+</div>

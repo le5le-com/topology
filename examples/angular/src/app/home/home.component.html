@@ -1,0 +1,45 @@
+<div class="bars">
+  <article *ngFor="let item of cms.bars;let i=index" [class.active]="curBar === i" [ngStyle]="item.styles"
+    (mouseenter)="onMouseEnter()" (mouseout)="onMouseOut()">
+    <header>{{item.title}}</header>
+    <p>{{item.desc}}</p>
+    <a class="button" *ngIf="item.url" [href]="item.url" target="_blank">{{item.button}}</a>
+    <a class="button" *ngIf="item.router" [routerLink]="item.router">{{item.button}}</a>
+    <img *ngIf="item.image" [src]="item.image" />
+  </article>
+  <div class="dots flex center">
+    <i *ngFor="let item of cms.bars;let i=index" [class.active]="curBar === i" (mouseenter)="curBar = i"></i>
+  </div>
+</div>
+
+<div class="header">
+  <app-header class="section"></app-header>
+</div>
+<section class="classes">
+  <h1>解决方案模板</h1>
+  <h2>丰富模板，帮助企业快速构建自己的图文设计</h2>
+  <div class="flex wrap section">
+    <a class="item" *ngFor="let item of cms.classes" routerLink="/search" [queryParams]="{c: item.name}">
+      <img [src]="item.img">
+      <label class="title">{{item.name}}</label>
+    </a>
+  </div>
+  <div class="mt30 text-center">秉承开源互惠精神，一起打造丰富的行业模板；共同创建一个强大、丰富的图库平台；还没有发现您想要的行业图文，
+    <a routerLink="/workspace">去创建</a>
+  </div>
+</section>
+<section class="vision">
+  <h1>愿景</h1>
+  <h2>共同打造共赢生态，为企业可视化提供全方位服务</h2>
+  <div class="flex wrap section mt20" style="justify-content:space-between">
+    <div *ngFor="let item of cms.vision">
+      <div class="flex middle">
+        <i [class]="item.icon"></i>
+        <label class="title">{{item.name}}</label>
+      </div>
+      <div class="desc">{{item.desc}}</div>
+    </div>
+  </div>
+</section>
+
+<app-footer></app-footer>

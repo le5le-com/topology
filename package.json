@@ -1,69 +1,25 @@
 {
-  "name": "account",
-  "version": "0.0.1",
-  "scripts": {
-    "ng": "ng",
-    "start": "ng serve --open --port=3000",
-    "dev": "ng serve --open --host=local.dev.le5le.com --port=3200 --configuration=dev --proxy-config=proxy.conf.dev.json",
-    "prod": "ng serve --open --host=local.le5le.com --port=3200 --configuration=prod --proxy-config=proxy.conf.prod.json",
-    "build": "ng build --prod",
-    "gen:doc": "typedoc --out ./docs --target es6 --theme minimal --mode file libs && cp -r ./examples ./docs/",
-    "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e",
-    "karma": "karma"
-  },
+  "name": "topology",
+  "version": "0.3.4",
   "private": true,
-  "dependencies": {
-    "@angular/animations": "~8.0.1",
-    "@angular/common": "~8.0.1",
-    "@angular/compiler": "~8.0.1",
-    "@angular/core": "~8.0.1",
-    "@angular/forms": "~8.0.1",
-    "@angular/platform-browser": "~8.0.1",
-    "@angular/platform-browser-dynamic": "~8.0.1",
-    "@angular/router": "~8.0.1",
-    "core-js": "^2.5.4",
-    "file-saver": "^2.0.2",
-    "le5le-components": "^0.8.8",
-    "le5le-store": "^1.0.2",
-    "le5le-ui": "^0.8.2",
-    "ngresizable": "^1.0.0",
-    "ngx-color-picker": "^8.1.0",
-    "rxjs": "~6.4.0",
-    "ts-clipboard": "^1.0.15",
-    "tslib": "^1.9.0",
-    "zone.js": "~0.9.1",
-    "topology-activity-diagram": "^0.0.4",
-    "topology-class-diagram": "^0.0.1",
-    "topology-core": "^0.0.10",
-    "topology-flow-diagram": "^0.0.1",
-    "topology-sequence-diagram": "^0.0.4"
+  "workspaces": [
+    "packages/*",
+    "bundle"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "start": "",
+    "build": "yarn workspaces run build",
+    "v": "lerna publish --skip-npm",
+    "docs": "typedoc --out ./docs --target es6 --theme minimal --mode file packages"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~0.800.0",
-    "@angular-devkit/build-ng-packagr": "~0.800.0",
-    "@angular/cli": "~8.0.3",
-    "@angular/compiler-cli": "~8.0.1",
-    "@angular/language-service": "~8.0.1",
-    "@types/jasmine": "~3.3.8",
-    "@types/jasminewd2": "~2.0.3",
-    "@types/node": "~8.9.4",
-    "codelyzer": "^5.0.0",
-    "copyfiles": "^2.0.0",
-    "jasmine-core": "~3.4.0",
-    "jasmine-spec-reporter": "~4.2.1",
-    "karma": "~4.1.0",
-    "karma-chrome-launcher": "~2.2.0",
-    "karma-coverage-istanbul-reporter": "~2.0.1",
-    "karma-jasmine": "~2.0.1",
-    "karma-jasmine-html-reporter": "^1.4.0",
-    "ng-packagr": "^5.1.0",
-    "protractor": "~5.4.0",
-    "ts-node": "~7.0.0",
-    "tsickle": "^0.35.0",
-    "tslint": "~5.15.0",
-    "typedoc": "^0.15.0",
-    "typescript": "~3.4.3"
+    "copyfiles": "latest",
+    "lerna": "^3.22.1",
+    "typedoc": "^0.17.7",
+    "tslint": "~6.1.0",
+    "typescript": "~3.8.3"
   }
 }

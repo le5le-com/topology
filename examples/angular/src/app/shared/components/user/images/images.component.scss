@@ -1,0 +1,86 @@
+@import "src/variables";
+@import "~le5le-ui/variables";
+
+.flex.wrap {
+  align-content: flex-start;
+  overflow: auto;
+
+  .icon {
+    width: 0.7rem;
+    height: 0.7rem;
+    display: inline-block;
+    text-align: center;
+    padding: 0.1rem;
+    margin-bottom: 0.01rem;
+    border: 1px solid transparent;
+
+    i {
+      font-size: 0.4rem;
+      line-height: 1;
+    }
+
+    &:hover {
+      border-color: $color-primary;
+    }
+
+    .blank {
+      margin: 0.1rem auto;
+    }
+  }
+
+  .image {
+    margin: 0.2rem 0.05rem 0;
+    width: 0.6rem;
+    height: 0.6rem;
+    display: inline-block;
+    text-align: center;
+    position: relative;
+
+    &.text {
+      line-height: 0.56rem;
+      color: $color-gray;
+    }
+
+    img {
+      height: 100%;
+    }
+
+    .icon-close {
+      line-height: 1;
+      position: absolute;
+      top: 0.05rem;
+      right: 0.05rem;
+      cursor: pointer;
+      display: none;
+      &:hover {
+        color: $color-primary;
+      }
+    }
+
+    &:hover {
+      border-color: $color-primary;
+      .icon-close {
+        display: block;
+      }
+    }
+  }
+
+  .active {
+    border: 1px solid $color-primary;
+    color: #fff;
+  }
+
+  &.small {
+    min-width: 1.8rem;
+
+    .image {
+      width: 0.5rem;
+      height: 0.5rem;
+      cursor: pointer;
+
+      &.text {
+        line-height: 0.5rem;
+      }
+    }
+  }
+}

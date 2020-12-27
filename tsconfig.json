@@ -1,27 +1,26 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
-    "rootDir": "./",
-    "outDir": "./dist/out-tsc",
+    "baseUrl": ".",
+    "outDir": "./dist",
     "sourceMap": true,
-    "declaration": false,
-    "downlevelIteration": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
+    "declaration": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "importHelpers": true,
-    "target": "es2015",
-    "typeRoots": ["node_modules/@types"],
+    "target": "es5",
+    "allowJs": true,
     "lib": ["es2018", "dom"],
     "paths": {
-      "topology-core": ["libs/topology"],
-      "topology-core/*": ["libs/topology/*"],
-      "topology-flow-diagram": ["libs/topology-flow-diagram"],
-      "topology-activity-diagram": ["libs/topology-activity-diagram"],
-      "topology-class-diagram": ["libs/topology-class-diagram"],
-      "topology-sequence-diagram": ["libs/topology-sequence-diagram"]
+      "@topology/core": ["packages/core"],
+      "@topology/core/*": ["packages/core/src/*"],
+      "@topology/flow-diagram": ["packages/flow-diagram"],
+      "@topology/activity-diagram": ["packages/activity-diagram"],
+      "@topology/class-diagram": ["packages/class-diagram"],
+      "@topology/sequence-diagram": ["packages/sequence-diagram"],
+      "@topology/chart-diagram": ["packages/chart-diagram"],
+      "@topology/layout": ["packages/layout"]
     }
-  }
+  },
+  "include": ["packages/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.spec.ts"]
 }

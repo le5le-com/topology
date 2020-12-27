@@ -1,0 +1,34 @@
+<div [class.transparent]="transparent" [class.default]="!transparent">
+  <div class="flex" *ngIf="!user">
+    <div class="item">
+      <a (click)="onLogin()">登录</a>
+    </div>
+    <div class="item">
+      <a class="button" (click)="onSignup()">免费使用</a>
+    </div>
+  </div>
+  <div class="flex" *ngIf="user">
+    <div class="item">
+      <a class="flex middle" style="display: flex">
+        <ui-avatar class="mr10" [letters]="user.usernamePinyin" [img]="user.avatarUrl" [colors]="['#1890ff']">
+        </ui-avatar>
+        {{ user.username }}
+        <i class="iconfont icon-angle-down ml5"></i>
+      </a>
+      <div class="dropdown right">
+        <div class="item">
+          <a routerLink="/user/home">个人中心</a>
+        </div>
+        <div class="item line"></div>
+        <div class="item"><a routerLink="/user/home">我的图文</a></div>
+        <div class="item"><a routerLink="/user/home" [queryParams]="{component: 1}">我的组件</a></div>
+        <div class="item"><a routerLink="/user/favorite">我的收藏</a></div>
+        <div class="item line"></div>
+        <div class="item"><a [href]="urls.account" target="_blank">账号设置</a></div>
+        <div class="item line"></div>
+        <div class="item"><a (click)="onSignout()">退出</a></div>
+      </div>
+    </div>
+  </div>
+
+</div>

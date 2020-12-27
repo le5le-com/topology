@@ -1,0 +1,10 @@
+<div class="item">
+  <a (click)="onClick(pen)">
+    <i class="iconfont icon-triangle-right" *ngIf="!pen.opened"></i>
+    <i class="iconfont icon-triangle-down" *ngIf="pen.opened"></i>
+    [{{pen.type? '连线':'节点'}}] {{pen.name}} <span *ngIf="pen.text">- {{pen.text }}</span>
+  </a>
+  <div *ngIf="pen.children && pen.opened">
+    <app-pen-tree-item *ngFor="let item of pen.children" [pen]="item" (selected)="onSelect($event)"></app-pen-tree-item>
+  </div>
+</div>

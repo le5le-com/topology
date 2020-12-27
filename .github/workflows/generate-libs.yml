@@ -21,10 +21,14 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Install core dependencies
+        working-directory: ./packages/core
+        run: npm install
+
       - name: Generate libs doc
         run: |
           pwd
-          npm run gen:doc
+          npm run docs
       - name: Git Init
         run: |
           pwd
@@ -47,65 +51,3 @@ jobs:
         run: |
           cd ./docs
           git push --set-upstream --force --quiet "https://${ACCESS_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" master:gh-pages
-
-  publish-npm:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12
-          registry-url: https://registry.npmjs.org/
-
-      - name: Git Clone
-        uses: actions/checkout@master
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Install lib dependencies
-        working-directory: ./libs/topology
-        run: npm install
-
-      - name: build
-        working-directory: ./libs/topology
-        run: npm run build
-
-      - name: publish
-        working-directory: ./dist/topology-core
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
-        run: npm publish
-
-  release:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12
-          registry-url: https://registry.npmjs.org/
-
-      - name: Git Clone
-        uses: actions/checkout@master
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Install bundle dependencies
-        working-directory: ./bundle
-        run: npm install
-
-      - name: build
-        working-directory: ./bundle
-        run: npm run build
-
-      - name: push release
-        uses: svenstaro/upload-release-action@1.0.1
-        with:
-          tag: "0.0.30"
-          file: "bundle/demo/topology.bundle.js"
-          asset_name: "topology.bundle.js"
-          repo_token: ${{ secrets.ACTIONS_ACCESS_TOKEN }}

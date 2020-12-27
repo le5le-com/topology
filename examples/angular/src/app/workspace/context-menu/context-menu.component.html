@@ -1,0 +1,82 @@
+<div class="context-menus" id="canvas-menus" [ngStyle]="contextmenu">
+  <div>
+    <a (click)="onTop()">
+      置顶
+    </a>
+  </div>
+  <div>
+    <a (click)="onBottom()">
+      置底
+    </a>
+  </div>
+  <div>
+    <a (click)="onUp()">
+      上移一层
+    </a>
+  </div>
+  <div>
+    <a (click)="onDown()">
+      下移一层
+    </a>
+  </div>
+  <div class="line"></div>
+  <div *ngIf="selection && selection.pens && selection.pens.length > 1">
+    <a (click)="onCombine()">
+      组合
+    </a>
+  </div>
+  <div *ngIf="selection && selection.pen && selection.pen.children">
+    <a (click)="onUncombine()">
+      取消组合
+    </a>
+  </div>
+  <div>
+    <a [class.disabled]="!selection" (click)="onLock()">
+      {{ locked ? '解锁' : '锁定' }}
+    </a>
+  </div>
+  <div class="line"></div>
+  <div>
+    <a [class.disabled]="!selection" (click)="onDel()">
+      删除
+    </a>
+  </div>
+  <div class="line"></div>
+  <div>
+    <a (click)="canvas.undo()" class="flex">
+      <span class="full">撤消</span>
+      <span class="ml50">Ctrl + Z</span>
+    </a>
+  </div>
+  <div>
+    <a (click)="canvas.redo()">
+      重做
+      <span class="ml50">Ctrl + Shift+ Z</span>
+    </a>
+  </div>
+  <div class="line"></div>
+  <div>
+    <a (click)="canvas.cut()" class="flex">
+      <span class="full">剪切</span>
+      <span class="ml50">Ctrl + X</span>
+    </a>
+  </div>
+  <div>
+    <a (click)="canvas.copy()" class="flex">
+      <span class="full">复制</span>
+      <span class="ml50">Ctrl + C</span>
+    </a>
+  </div>
+  <div>
+    <a (click)="canvas.paste()" class="flex">
+      <span class="full">粘贴</span>
+      <span class="ml50">Ctrl + V</span>
+    </a>
+  </div>
+  <div class="line"></div>
+  <div>
+    <a [class.disabled]="!selection || !selection.pen || !selection.pen.image" (click)="onCopyImage()" class="flex">
+      <span class="full">复制节点图片地址</span>
+    </a>
+  </div>
+</div>

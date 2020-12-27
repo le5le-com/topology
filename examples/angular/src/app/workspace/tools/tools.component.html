@@ -1,0 +1,100 @@
+<div class="search">
+  <div>
+    <input class="input" [(ngModel)]="search" placeholder="搜索" (keyup)="search$.next($event.target.value)" />
+    <i class="iconfont icon-search" (click)="onSearch(search)"></i>
+  </div>
+</div>
+<div class="nav nav-tab">
+  <div class="item ml10" [class.active]="tab === 1" (click)="tab = 1">系统组件</div>
+  <div class="item" [class.active]="tab === 2" (click)="tab = 2">我的组件</div>
+  <div class="item" [class.active]="tab === 3" (click)="tab = 3">我的图片</div>
+</div>
+<div *ngIf="tab === 1" class="tools">
+  <div *ngFor="let item of systemTools">
+    <div class="group" (click)="item.expand = !item.expand">
+      <i class="iconfont icon-cube mr5"></i>
+      <span class="full">{{ item.name }}</span>
+      <i *ngIf="item.expand" class="iconfont icon-angle-down"></i>
+      <i *ngIf="!item.expand" class="iconfont icon-angle-right"></i>
+    </div>
+    <div class="buttons mb20" *ngIf="item.expand">
+      <ng-container *ngFor="let button of item.list">
+        <i
+          *ngIf="!button.hidden"
+          class=" iconfont {{ button.icon }}"
+          [title]="button.name"
+          [draggable]="button.data"
+          (dragstart)="onDrag($event, button)"
+          (touchstart)="onTouchstart(button)"
+        >
+        </i>
+      </ng-container>
+    </div>
+  </div>
+
+  <div *ngIf="topologyTools">
+    <div class="group" (click)="topologyToolsExpand = !topologyToolsExpand">
+      <i class="iconfont icon-cube mr5"></i>
+      <span class="full">其他</span>
+      <i *ngIf="topologyToolsExpand" class="iconfont icon-angle-down"></i>
+      <i *ngIf="!topologyToolsExpand" class="iconfont icon-angle-right"></i>
+    </div>
+    <div class="buttons mb20" *ngIf="topologyToolsExpand">
+      <ng-container *ngFor="let button of topologyTools">
+        <i
+          *ngIf="!button.hidden && button.icon"
+          class="{{ button.icon }}"
+          [title]="button.name"
+          [draggable]="button.data"
+          (dragstart)="onDrag($event, button)"
+          (touchstart)="onTouchstart(button)"
+        >
+        </i>
+        <div
+          *ngIf="!button.hidden && button.svg"
+          [innerHTML]="button.svg | html"
+          [title]="button.name"
+          [draggable]="button.data"
+          (dragstart)="onDrag($event, button, true)"
+          (touchstart)="onTouchstart(button, true)"
+        ></div>
+      </ng-container>
+    </div>
+  </div>
+</div>
+<div *ngIf="tab === 2" class="tools big">
+  <div *ngFor="let item of userTools">
+    <div class="group" (click)="item.expand = !item.expand">
+      <i class="iconfont icon-cube mr5"></i>
+      <span class="full">{{ item.name }}</span>
+      <i *ngIf="item.expand" class="iconfont icon-angle-down"></i>
+      <i *ngIf="!item.expand" class="iconfont icon-angle-right"></i>
+    </div>
+    <div class="buttons" *ngIf="item.expand">
+      <ng-container *ngFor="let button of item.list">
+        <img
+          *ngIf="!button.hidden"
+          [appImgAuthSrc]="button.image"
+          [title]="button.name"
+          draggable="true"
+          (dragstart)="onDrag($event, button)"
+          (touchstart)="onTouchstart(button)"
+          (dblclick)="onEditComponent(button.name, button.id)"
+        />
+      </ng-container>
+      <span
+        class="add"
+        title="我来添加组件"
+        draggable="true"
+        (dragend)="onEditComponent(item.name)"
+        (click)="onEditComponent(item.name)"
+      >
+        <i class="iconfont icon-add"></i>
+      </span>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="tab === 3" class="tools">
+  <app-user-images class="block mt20" [tool]="true"></app-user-images>
+</div>

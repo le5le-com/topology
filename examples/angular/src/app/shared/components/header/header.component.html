@@ -1,0 +1,30 @@
+<div class="menus" [class.white]="theme" [class.clicked]="menuClicked" (click)="onClickMenu($event)">
+  <div class="item logo">
+    <a routerLink="/">
+      <img class="mr5" src="/assets/img/favicon.ico" />
+      Le5le Topology
+    </a>
+  </div>
+  <div class="item">
+    <a routerLink="/workspace">
+      <span class="btn">开始设计</span>
+    </a>
+  </div>
+  <div class="item" *ngFor="let item of menus">
+    <a *ngIf="item.router" [routerLink]="item.router">
+      {{item.name}}
+    </a>
+    <a *ngIf="item.url" [href]="item.url" target="_blank">
+      {{item.name}}
+    </a>
+  </div>
+
+  <div class="item search">
+    <input class="input" [(ngModel)]="search" placeholder="搜索" (keyup)="search$.next($event.target.value)" />
+    <i class="iconfont icon-search" (click)="onSearch(search)"></i>
+  </div>
+
+  <div class="full"></div>
+
+  <app-user [transparent]="!theme"></app-user>
+</div>

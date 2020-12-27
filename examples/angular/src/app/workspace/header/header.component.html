@@ -1,0 +1,262 @@
+<div class="menus" [class.clicked]="menuClicked" (click)="onClickMenu($event)">
+  <a class="item" routerLink="/" style="padding: 0">
+    <img src="/assets/img/favicon.ico" />
+  </a>
+  <div class="item">
+    <a routerLink="/search">
+      文件
+    </a>
+    <div class="dropdown">
+      <div class="item">
+        <a (click)="onMenu('new')">
+          新建文件
+          <span class="ml50">Ctrl + N</span>
+        </a>
+      </div>
+      <div class="item">
+        <a (click)="onMenu('open')">
+          打开文件...
+          <span class="ml50">Ctrl + O</span>
+        </a>
+      </div>
+      <div class="item">
+        <a (click)="onMenu('load')">
+          导入文件
+          <span class="ml50">Ctrl + I</span>
+        </a>
+      </div>
+      <div class="item" (mouseenter)="showFigure = true" (mouseleave)="onLeaveFigure()">
+        <a>
+          打开最近的文件
+          <i class="iconfont icon-angle-right"></i>
+        </a>
+        <div class="dropdown pt15" [class.block]="showFigure" style="top:-.85rem;min-width:7rem;min-height:7rem">
+          <figure>
+            <div *ngIf="recently.length" class="mb20">
+              <div class="flex wrap">
+                <a class="topo" *ngFor="let item of recently;let i=index" [title]="item.name" routerLink="/workspace"
+                  [queryParams]="{ id: item.id, version: item.version }" (click)="showFigure=false">
+                  <img [appImgAuthSrc]="item.image" />
+                  <i class="iconfont icon-delete" (click)="onRemoveRecently($event, i)"></i>
+                </a>
+              </div>
+            </div>
+          </figure>
+        </div>
+      </div>
+      <div class="item line"></div>
+      <div>
+        <div class="item">
+          <a (click)="onMenu('save')">
+            保存
+            <span class="ml50">Ctrl + S</span>
+          </a>
+        </div>
+        <div class="item">
+          <a (click)="onMenu('saveAs')">
+            另存为...
+            <span class="ml50">Ctrl + Shift+ S</span>
+          </a>
+        </div>
+        <div class="item">
+          <a (click)="onMenu('downJson')">
+            下载JSON文件
+          </a>
+        </div>
+        <div class="item">
+          <a (click)="onMenu('downZip')">
+            下载zip打包文件
+          </a>
+        </div>
+        <div class="item line"></div>
+        <div class="item">
+          <a (click)="onMenu('downPng')">
+            下载为PNG
+          </a>
+        </div>
+        <div class="item">
+          <a (click)="onMenu('downSvg')">
+            下载为SVG
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="item">
+    <a>编辑</a>
+    <div class="dropdown">
+      <div class="item">
+        <a (click)="onMenu('undo')">
+          撤消
+          <span class="ml50">Ctrl + Z</span>
+        </a>
+      </div>
+      <div class="item">
+        <a (click)="onMenu('redo')">
+          恢复
+          <span class="ml50">Ctrl + Shift+ Z</span>
+        </a>
+      </div>
+      <div class="item line"></div>
+      <div class="item">
+        <a (click)="onMenu('cut')">
+          剪切
+          <span class="ml50">Ctrl + X</span>
+        </a>
+      </div>
+      <div class="item">
+        <a (click)="onMenu('copy')">
+          复制
+          <span class="ml50">Ctrl + C</span>
+        </a>
+      </div>
+      <div class="item">
+        <a (click)="onMenu('paste')">
+          粘贴
+          <span class="ml50">Ctrl + V</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="item" *ngFor="let item of menus">
+    <a *ngIf="!item.route && !item.url">{{item.name}}</a>
+    <a *ngIf="item.router" [routerLink]="item.router">
+      {{item.name}}
+    </a>
+    <a *ngIf="item.url" [href]="item.url" target="_blank">
+      {{item.name}}
+    </a>
+    <div class="dropdown" *ngIf="item.children">
+      <div class="item" *ngFor="let menu of item.children" [class.line]="!menu.name">
+        <a *ngIf="menu.router" [routerLink]="menu.router">
+          {{menu.name}}
+        </a>
+        <a *ngIf="menu.url" [href]="menu.url" target="_blank">
+          {{menu.name}}
+        </a>
+        <a *ngIf="menu.dialog" (click)="dialogs[menu.dialog]=true">
+          {{menu.name}}
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="full"></div>
+  <div class="flex">
+    <div class="item mh5" [class.disabled]="!id" title="仅可预览已保存的图文">
+      <a (click)="onMenu('view')" style="padding-right: 0;">
+        <i class="iconfont icon-attention rel" style="top:1px; margin-right: 2px"></i>
+        预览
+      </a>
+    </div>
+  </div>
+  <div class="flex">
+    <div class="separator"></div>
+    <div class="item mh5">
+      视图：{{ data.scale * 100 | number: ".0-2" }}%
+      <a  title="还原原始尺寸" class="hover" *ngIf="data.scale !== 1" (click)="onMenu('scale', 1)" style="padding-right: 0;">
+        还原
+      </a>
+    </div>
+    <div class="separator"></div>
+    <div class="item mh5">
+      <a  (click)="onMenu('fitView')" title='图形居中，并且缩放图形到画布尺寸' >
+        自适应
+      </a>
+    </div>
+    <div class="separator"></div>
+    <div class="item mh5">
+      <a  (click)="onMenu('centerView')" title='居中图形' >
+        居中
+      </a>
+    </div>
+    <div class="separator"></div>
+    <div *ngIf="!data.locked" class="item" (click)="onMenu('lock')" title="锁定">
+      <a>
+        <i class="iconfont icon-unlock"></i>
+      </a>
+    </div>
+    <div *ngIf="data.locked" class="item" (click)="onMenu('lock')" title="解锁">
+      <a style="color:#faad14!important">
+        <i class="iconfont icon-lock"></i>
+      </a>
+    </div>
+    <div class="separator"></div>
+    <div class="item lines">
+      <a>
+        <i class="iconfont icon-{{ data.lineName }}" style="position: relative;top: .06rem;"></i>
+      </a>
+      <div class="dropdown">
+        <div class="item">
+          默认连线类型：
+        </div>
+        <div class="item" *ngFor="let item of lineNames">
+          <a (click)="data.lineName=item.value" style="justify-content:initial">
+            <span class="inline" style="width: .8rem;">{{item.name}}：</span>
+            <i class="iconfont icon-{{ item.value }}"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="item lines">
+      <a>
+        <i class="iconfont icon-from-{{ data.fromArrow }}" style="position: relative;top: .06rem;"></i>
+      </a>
+      <div class="dropdown">
+        <div class="item">
+          默认起点箭头：
+        </div>
+        <div class="item" *ngFor="let item of arrowTypes">
+          <a (click)="data.fromArrow=item">
+            <i class="iconfont icon-from-{{ item }}"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="item lines">
+      <a>
+        <i class="iconfont icon-to-{{ data.toArrow }}" style="position: relative;top: .06rem;"></i>
+      </a>
+      <div class="dropdown">
+        <div class="item">
+          默认终点箭头：
+        </div>
+        <div class="item" *ngFor="let item of arrowTypes">
+          <a (click)="data.toArrow=item">
+            <i class="iconfont icon-to-{{ item }}"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="separator"></div>
+    <div class="item" (click)="onMenu('save')" title="保存到云端">
+      <a>
+        <i class="iconfont icon-upload"></i>
+      </a>
+    </div>
+    <div class="item" [class.disabled]="!file.id" [title]="file.id && file.shared ? '已分享，点击取消' : '分享'">
+      <a (click)="onMenu('share')">
+        <i class="iconfont icon-share" [class.primary]="file.id && file.shared"></i>
+      </a>
+    </div>
+  </div>
+  <div class="separator"></div>
+  <app-user class="header-small" [transparent]="false"></app-user>
+</div>
+<div class="modal" *ngIf="dialogs.license">
+  <div class="modal-content">
+    <div class="modal-header pointer" uiDivMove [isHead]="true">
+      <div class="caption">许可与声明</div>
+      <i class="fr iconfont icon-close" (click)="dialogs.license = null"></i>
+    </div>
+    <div class="modal-body">
+      <p>本项目开源，支持MIT协议。希望大家一起参与维护！</p>
+      <p>所有权和解释权归le5le.com和开发者Alsmile所有！</p>
+      <p>@2020 le5le.com</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="button" (click)="dialogs.license = null">
+        确定
+      </button>
+    </div>
+  </div>
+</div>

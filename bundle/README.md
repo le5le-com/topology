@@ -11,7 +11,7 @@ This is a bundle js of topology libs.
 ```
 $ cd bundle
 $ yarn
-$ npm run build
+$ yarn build
 
 ```
 

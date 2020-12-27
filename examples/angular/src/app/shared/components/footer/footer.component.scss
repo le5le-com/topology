@@ -1,0 +1,42 @@
+@import "src/variables";
+@import "~le5le-ui/variables";
+
+footer {
+  background-color: #141621;
+  color: #fff;
+  padding: 0.5rem 0.2rem;
+  text-align: left;
+
+  .full {
+    flex-grow: 1;
+    width: inherit !important;
+  }
+
+  .section {
+    width: 10rem;
+
+    & > div {
+      width: 25%;
+      padding-right: 0.2rem;
+    }
+
+    .title {
+      color: #fff;
+      font-size: 0.14rem;
+      font-weight: normal;
+      margin-bottom: 0.05rem;
+    }
+
+    a {
+      display: block;
+      color: #787b92;
+      text-decoration: none;
+      line-height: 0.3rem;
+    }
+
+    img {
+      width: 1.5rem;
+      margin-top: 0.1rem;
+    }
+  }
+}

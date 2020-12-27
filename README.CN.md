@@ -14,6 +14,10 @@ Le5le-topology 是一个可视化在线绘图工具，使用 Canvas + Typescript
 
 ![topology](https://img2018.cnblogs.com/blog/328506/201909/328506-20190904144733715-530893726.png)
 
+# VS Code 插件
+
+[查看](https://marketplace.visualstudio.com/items?itemName=Alsmile.le5le-topology-plugin)
+
 # 特性
 
 - 极易扩展 - 程序员可以以中间件方式编写自己的图表。框架实现了拖曳、缩放、旋转、自定义属性等基础操作，开发者只用关心图表绘画实现即可。
@@ -21,24 +25,14 @@ Le5le-topology 是一个可视化在线绘图工具，使用 Canvas + Typescript
 - 动画
 - TypeScript
 
-# 源码结构
-
-```
-- libs
-  |- topology  // topogoly-core库源码
-- src  // 官网源码.
-- bundle // es5的压缩包和demo
-- demo // demo
-```
-
 # 快速上手
 
 ## typescrypt/es6
 
 ```
-import { Topology } from 'topology-core';
+import { Topology } from '@topology/core';
 
-var canvas = new Topology('topo-dom', options);
+var canvas = new Topology('topology-dom', options);
 canvas.open(data);
 
 ```
@@ -48,7 +42,7 @@ canvas.open(data);
 ```
 <script src="/bundle/topology.bundle.js"></script>
 
-var canvas = new Le5leTopology.Topology('topo-canvas', {});
+var canvas = new Le5leTopology.Topology('topology-dom', options);
 canvas.open(data);
 
 ```
@@ -59,59 +53,21 @@ canvas.open(data);
 
 [→ 中文文档](https://www.yuque.com/alsmile/topology/about)
 
-# 开发
-
-## 编译[在线绘图官网](https://topology.le5le.com) 前端源码
+# 开发与编译
 
 ```
+// 采用的是 Monorepos + yarn workspaces 方式目录结构
 $ yarn
-$ npm start
+$
 
-# build
-$ npm run build
-
-```
-
-## 调试本地开发环境
-
-```
-$ yarn
-
-//【注意】 修改host文件，把local.dev.le5le.com代理到127.0.0.1
-$ npm run dev
-```
-
-## 调试生产环境
-
-```
-$ yarn
-
-//【注意】 修改host文件，把local.le5le.com代理到127.0.0.1
-$ npm run prod
-```
-
-## 编译核心库源码 Topology-core lib
-
-```
-[libs/topology#] yarn
-
-# build
-[libs/topology#] npm run build
-
-```
-
-## 编译流程图源码 Topology-flow-diagram lib
-
-```
-[libs/topology-flow-diagram#] yarn
-
-# build
-[libs/topology-flow-diagram#] npm run build
+// build
+$ yarn build
 
 ```
 
 # 贡献者
 
+- [hudeyi](https://github.com/deyihu)
 - [Nickbing Lao](https://github.com/giscafer)
 - [ivanZzzz](https://github.com/ivan135)
 - [johnnyhhj](https://github.com/johnnyhhj)
@@ -133,6 +89,16 @@ $ npm run prod
 # 核心维护者
 
 - [Alsmile](https://github.com/Alsmile)
+
+# 谁在使用
+
+- 海云捷迅
+- 汇客互动
+- 重庆环投生态环境监测网络与工程治理有限公司
+- 恒安嘉新（北京）科技股份公司
+- 北京翌普信息科技有限公司
+- 天津辰思科技
+- 上海层峰
 
 # License
 

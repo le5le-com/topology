@@ -5,6 +5,7 @@ dist/
 tmp/
 out-tsc/
 **/topology.bundle.js
+**/bundle/demo/index.js
 
 # dependencies
 node_modules/
@@ -12,6 +13,7 @@ node_modules/
 # IDEs and editors
 .idea/
 .project
+.vscode
 .classpath
 .c9/
 *.launch
@@ -30,7 +32,7 @@ node_modules/
 /connect.lock
 /coverage
 /libpeerconnection.log
-npm-debug.log
+*-debug.log
 yarn-error.log
 testem.log
 /typings

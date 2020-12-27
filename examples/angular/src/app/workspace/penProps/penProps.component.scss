@@ -1,0 +1,227 @@
+@import "src/variables";
+@import "~le5le-ui/variables";
+
+.nav-tab {
+  & > .item {
+    margin: 0 0.1rem;
+    line-height: 0.32rem;
+    cursor: pointer;
+  }
+}
+
+.group {
+  padding: 0.15rem;
+  border-bottom: 1px solid #ccc;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  & > .title {
+    line-height: 1;
+    display: flex;
+
+    .full {
+      flex-grow: 1;
+    }
+
+    i {
+      font-weight: normal;
+    }
+  }
+
+  .grid > div {
+    .input {
+      width: 100%;
+    }
+    ui-select {
+      width: 0.95rem;
+    }
+  }
+
+  .animate {
+    .nowrap {
+      width: 0.6rem;
+    }
+    ui-select,
+    .input {
+      width: 1.4rem;
+    }
+  }
+
+  .icon-item {
+    line-height: 1;
+  }
+
+  svg {
+    width: 0.8rem;
+    height: 0.18rem;
+    position: relative;
+    top: 0.01rem;
+  }
+
+  .dropdown {
+    .icon-item:hover {
+      background: $color-primary;
+    }
+  }
+
+  .input.color {
+    position: relative;
+    display: flex;
+    i {
+      display: inline-block;
+      width: 0.12rem;
+      height: 0.12rem;
+      border: 1px solid $color-border;
+      margin-top: 0.08rem;
+    }
+
+    input {
+      width: 100%;
+      border: none;
+      padding: 0 0 0 0.05rem;
+    }
+
+    color-picker {
+      position: absolute;
+      left: -0.1rem;
+    }
+  }
+
+  .input-line {
+    margin-bottom: 0.05rem;
+    > label {
+      width: 0.6rem;
+      margin: 0;
+    }
+    .input {
+      width: 100%;
+      font-family: Arial;
+    }
+
+    .icon {
+      height: 0.3rem;
+      line-height: 1;
+
+      .image-upload {
+        display: flex;
+        width: 0.3rem;
+        height: 0.3rem;
+        text-align: center;
+        border: 1px dashed $color-border;
+        border-radius: 2px;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .topology {
+        font-size: 0.3rem;
+      }
+    }
+  }
+
+  .checkbox > span > span {
+    position: relative;
+    top: -0.01rem;
+  }
+}
+
+:host {
+  form {
+    min-height: calc(100vh - 1rem);
+  }
+
+  ui-slider {
+    overflow: hidden;
+    position: relative;
+    top: 0.05rem;
+    padding: 0 0.1rem 0 0.07rem;
+  }
+}
+
+.tools {
+  position: fixed;
+  background: #fff;
+  right: 0;
+  top: 0.4rem;
+  bottom: 0;
+  width: 2.4rem;
+  border-left: 1px solid #ddd;
+  z-index: 1;
+
+  .title {
+    padding: 0.05rem 0.2rem;
+    line-height: 0.3rem;
+    border-bottom: 1px solid #eee;
+
+    .iconfont {
+      font-weight: normal;
+    }
+
+    a {
+      font-weight: normal;
+    }
+  }
+
+  .icon {
+    width: 0.3rem;
+    height: 0.3rem;
+    line-height: 1;
+    margin: 0.1rem;
+    cursor: pointer;
+
+    .blank {
+      text-align: center;
+      line-height: 0.3rem;
+      color: $color-gray;
+      border: 1px solid $color-border;
+
+      &:hover {
+        color: $color-primary;
+        border: 1px solid;
+      }
+    }
+
+    &:hover {
+      color: $color-primary;
+    }
+
+    .topology {
+      font-size: 0.3rem;
+    }
+  }
+
+  .group {
+    padding: 0 0 0.15rem 0;
+  }
+}
+
+.icon-help-circle {
+  font-size: 0.14rem;
+}
+
+ui-switch {
+  height: 0.2rem;
+}
+
+.layout .flex {
+  & > label {
+    width: 0.6rem;
+  }
+
+  .full {
+    & > .input {
+      width: 1.5rem;
+    }
+  }
+}
+
+.mt3 {
+  margin-top: 0.03rem !important;
+}
+
+.checkbox > span {
+  line-height: 1;
+  display: inline-block;
+}

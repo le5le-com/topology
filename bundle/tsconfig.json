@@ -7,12 +7,14 @@
     "module": "esnext",
     "target": "esnext",
     "paths": {
-      "topology-core": ["../libs/topology"],
-      "topology-core/*": ["../libs/topology/*"],
-      "topology-flow-diagram": ["../libs/topology-flow-diagram"],
-      "topology-activity-diagram": ["../libs/topology-activity-diagram"],
-      "topology-class-diagram": ["../libs/topology-class-diagram"],
-      "topology-sequence-diagram": ["../libs/topology-sequence-diagram"]
+      "@topology/core": ["../packages/core"],
+      "@topology/core/*": ["../packages/core/src/*"],
+      "@topology/flow-diagram": ["../packages/flow-diagram"],
+      "@topology/activity-diagram": ["../packages/activity-diagram"],
+      "@topology/class-diagram": ["../packages/class-diagram"],
+      "@topology/sequence-diagram": ["../packages/sequence-diagram"],
+      "@topology/chart-diagram": ["../packages/chart-diagram"],
+      "@topology/layout": ["../packages/layout"]
     }
   },
   "include": ["src/**/*.ts"],

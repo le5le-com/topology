@@ -1,0 +1,104 @@
+@import 'src/variables';
+@import '~le5le-ui/variables';
+
+.search {
+  border-bottom: 1px solid $color-border;
+  background-color: #fff;
+
+  & > div {
+    position: relative;
+    width: 1.99rem;
+  }
+
+  .input {
+    max-width: 100%;
+    border: none;
+    padding-left: 0.1rem;
+    padding-right: 0.25rem;
+  }
+
+  i {
+    position: absolute;
+    right: 0.08rem;
+    cursor: pointer;
+  }
+}
+
+.nav-tab {
+  & > .item {
+    margin: 0 0.07rem;
+    line-height: 0.32rem;
+    cursor: pointer;
+  }
+}
+
+.tools {
+  padding: 0 0.1rem;
+
+  .group {
+    width: 1.8rem;
+    display: flex;
+    align-items: center;
+    margin-top: 0.15rem;
+    color: $color-button;
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+      color: $color-primary;
+    }
+  }
+
+  .buttons {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-left: 0.2rem;
+    line-height: 1;
+
+    & > i,
+    & > div {
+      display: inline-block;
+      font-size: 0.24rem;
+      width: 0.24rem;
+      line-height: 1;
+      margin: 0.08rem 0.15rem 0.08rem 0;
+      cursor: pointer;
+
+      &:nth-child(4n + 0) {
+        margin-right: 0;
+      }
+
+      &:hover {
+        color: $color-primary;
+      }
+    }
+
+    .add {
+      display: inline-flex;
+      width: 0.24rem;
+      height: 0.24rem;
+      color: $color-gray;
+      border: 1px dashed $color-border;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+  }
+
+  &.big {
+    .buttons {
+      & > img {
+        width: 0.3rem;
+        max-height: 0.3rem;
+        margin: 0.05rem 0.1rem 0.05rem 0;
+        cursor: pointer;
+      }
+
+      .add {
+        width: 0.28rem;
+        height: 0.28rem;
+      }
+    }
+  }
+}

@@ -1,0 +1,1649 @@
+<div class="nav nav-tab">
+  <div class="item" [class.active]="tab===1" (click)="tab=1">外观</div>
+  <div class="item" [class.active]="tab===2" (click)="tab=2" *ngIf="selection.pen">事件</div>
+  <div class="item" [class.active]="tab===3" (click)="tab=3" *ngIf="selection.pen">动效</div>
+  <div class="item" [class.active]="tab===4" (click)="tab=4" *ngIf="selection.pen">数据</div>
+  <div class="item" [class.active]="tab===5" (click)="tab=5">结构</div>
+</div>
+
+<div *ngIf="tab===1">
+  <div class="group" *ngIf="selection.pens">
+    <div class="title">对齐</div>
+    <div>
+      <label class="hover pointer mr10" *ngFor="let item of nodesAlgin" [title]="item.desc">
+        <i class="iconfont icon-align-{{ item.value }} " (click)="onNodesAlign(item.value)"></i>
+      </label>
+      <label class="hover pointer mr10">
+        <i class="iconfont icon-horizontal-between" (click)="onSpaceBetween()" title="等距分布，两端对齐，节点之间的间隔都相等"></i>
+      </label>
+    </div>
+  </div>
+
+  <div class="group layout" *ngIf="selection.pens">
+    <div class="title">
+      <div class="full">排版</div>
+      <i *ngIf="show.layout !== false" class="hover iconfont icon-angle-down" (click)="show.layout = false"></i>
+      <i *ngIf="show.layout === false" class="hover iconfont icon-angle-right" (click)="show.layout = true"></i>
+    </div>
+    <div class="mt10" *ngIf="show.layout !== false">
+      <div class="flex middle mb10">
+        <label>最大宽度：</label>
+        <div class="full pr10">
+          <input type="number" class="input" [(ngModel)]="layout.maxWidth" title="超出最大宽度换行">
+        </div>
+      </div>
+      <div class="flex middle mb10">
+        <label>节点宽度：</label>
+        <div class="full pr10">
+          <input type="number" class="input" [(ngModel)]="layout.nodeWidth" title="固定每个节点的宽度">
+        </div>
+      </div>
+      <div class="flex middle mb10">
+        <label>节点高度：</label>
+        <div class="full pr10">
+          <input type="number" class="input" [(ngModel)]="layout.nodeHeight" title="固定每个节点的高度">
+        </div>
+      </div>
+      <div class="flex middle mb10">
+        <label>水平个数：</label>
+        <div class="full pr10">
+          <input type="number" class="input" [(ngModel)]="layout.maxCount" title="超出最大个数，将自动计算水平间距（下面水平间距设置将无效）">
+        </div>
+      </div>
+      <div class="flex middle mb10">
+        <label>水平间距：</label>
+        <div class="full pr10">
+          <input type="number" class="input" [(ngModel)]="layout.spaceWidth" title="节点之间水平间距（px）">
+        </div>
+      </div>
+      <div class="flex middle mb10">
+        <label>垂直间距：</label>
+        <div class="full pr10">
+          <input type="number" class="input" [(ngModel)]="layout.spaceHeight" title="节点之间垂直间距（px）">
+        </div>
+      </div>
+      <div class="flex middle">
+        <label></label>
+        <div class="full pr10">
+          <button class="button primary" (click)="onLayout()">开始排版</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="group" *ngIf="selection.pen && !selection.pen.type">
+    <div class="title">
+      <div class="full">位置和大小</div>
+      <i *ngIf="show.pos !== false" class="hover iconfont icon-angle-down" (click)="show.pos = false"></i>
+      <i *ngIf="show.pos === false" class="hover iconfont icon-angle-right" (click)="show.pos = true"></i>
+    </div>
+    <div *ngIf="show.pos !== false">
+      <div class="flex grid">
+        <div>X（px）</div>
+        <div>Y（px）</div>
+      </div>
+      <div class="flex grid mt5">
+        <div class="mr5">
+          <input type="number" name="x" class="input" [(ngModel)]="pen.rect.x" [uiMin]="0" [uiMax]="5000"
+            [readonly]="readonly" required (change)="onChangeProp()" />
+        </div>
+        <div>
+          <input type="number" name="y" class="input" [(ngModel)]="pen.rect.y" [uiMin]="0" [uiMax]="5000"
+            [readonly]="readonly" required (change)="onChangeProp()" />
+        </div>
+      </div>
+      <div class="flex grid mt5">
+        <div>宽（px）</div>
+        <div>高（px）</div>
+      </div>
+      <div class="flex grid">
+        <div class="mr5">
+          <input type="number" name="width" class="input" [(ngModel)]="pen.rect.width" [uiMin]="0" [uiMax]="5000"
+            [readonly]="readonly" required (change)="onChangeProp()" />
+        </div>
+        <div>
+          <input type="number" name="height" class="input" [(ngModel)]="pen.rect.height" [uiMin]="0" [uiMax]="5000"
+            [readonly]="readonly" required (change)="onChangeProp()" />
+        </div>
+      </div>
+      <div *ngIf="pen.is3D">
+        <div class="flex grid mt5">
+          <div>Z（px）</div>
+          <div></div>
+        </div>
+        <div class="flex grid">
+          <div class="mr5">
+            <input type="number" name="z" class="input" [(ngModel)]="pen.z" [uiMin]="0" [uiMax]="5000"
+              [readonly]="readonly" (change)="onChangeProp()" />
+          </div>
+          <div></div>
+        </div>
+      </div>
+      <div class="flex grid mt5">
+        <div title="百分比%对应的小数值">圆角（0 - 1）</div>
+        <div>旋转（°）</div>
+      </div>
+      <div class="flex grid">
+        <div class="mr5">
+          <input type="number" name="borderRadius" class="input" [(ngModel)]="pen.borderRadius" [uiMin]="0" [uiMax]="1"
+            [readonly]="readonly" (change)="onChangeProp()" />
+        </div>
+        <div>
+          <input type="number" name="rotate" class="input" [(ngModel)]="pen.rotate" [uiMin]="0" [uiMax]="360"
+            [readonly]="readonly" (change)="onChangeProp()" />
+        </div>
+      </div>
+      <div class="flex grid mt5">
+        <div title="padding-left">内边距-左</div>
+        <div title="padding-right">内边距-右</div>
+      </div>
+      <div class="flex grid">
+        <div class="mr5">
+          <input name="paddingLeft" class="input" [(ngModel)]="pen.paddingLeft" [readonly]="readonly" required
+            (change)="onChangeProp()" />
+        </div>
+        <div>
+          <input name="paddingRight" class="input" [(ngModel)]="pen.paddingRight" [readonly]="readonly" required
+            (change)="onChangeProp()" />
+        </div>
+      </div>
+      <div class="flex grid mt5">
+        <div title="padding-top">内边距-上</div>
+        <div title="padding-bottom">内边距-下</div>
+      </div>
+      <div class="flex grid">
+        <div class="mr5">
+          <input name="paddingTop" class="input" [(ngModel)]="pen.paddingTop" [readonly]="readonly" required
+            (change)="onChangeProp()" />
+        </div>
+        <div>
+          <input name="paddingBottom" class="input" [(ngModel)]="pen.paddingBottom" [readonly]="readonly" required
+            (change)="onChangeProp()" />
+        </div>
+      </div>
+      <div class="mt5 gray" style="line-height: 1.5">
+        内边距：输入数字表示像素；输入%表示百分比
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="title">
+      <div class="full">样式</div>
+      <i *ngIf="show.looks !== false" class="hover iconfont icon-angle-down" (click)="show.looks = false"></i>
+      <i *ngIf="show.looks === false" class="hover iconfont icon-angle-right" (click)="show.looks = true"></i>
+    </div>
+    <div *ngIf="show.looks !== false" class="mt5">
+      <div class="flex grid">
+        <div>线条样式</div>
+        <div *ngIf="pen.type">连线类型</div>
+      </div>
+      <div class="flex grid mt5">
+        <div class="mr5 rel">
+          <div class="input" [class.readonly]="readonly" (click)="$event.stopPropagation(); drowdown = 1">
+            <div class="icon-item" [class.hidden]="pen.dash">
+              <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                <g fill="none" stroke="black" stroke-width="1">
+                  <path d="M0 9 l85 0" />
+                </g>
+              </svg>
+            </div>
+            <div class="icon-item" [class.hidden]="pen.dash !== 1">
+              <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                <g fill="none" stroke="black" stroke-width="1">
+                  <path stroke-dasharray="5,5" d="M0 9 l85 0" />
+                </g>
+              </svg>
+            </div>
+            <div class="icon-item" [class.hidden]="pen.dash !== 2">
+              <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                <g fill="none" stroke="black" stroke-width="1">
+                  <path stroke-dasharray="10,10" d="M0 9 l85 0" />
+                </g>
+              </svg>
+            </div>
+            <div class="icon-item" [class.hidden]="pen.dash !== 3">
+              <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                <g fill="none" stroke="black" stroke-width="1">
+                  <path stroke-dasharray="10,10,2,10" d="M0 9 l85 0" />
+                </g>
+              </svg>
+            </div>
+          </div>
+          <div class="dropdown" *ngIf="!readonly" [class.block]="drowdown === 1">
+            <div class="icon-item ph10 pv5" (click)="onClickDash(0)">
+              <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                <g fill="none" stroke="black" stroke-width="1">
+                  <path d="M0 9 l85 0" />
+                </g>
+              </svg>
+            </div>
+            <div class="icon-item ph10 pv5" (click)="onClickDash(1)">
+              <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                <g fill="none" stroke="black" stroke-width="1">
+                  <path stroke-dasharray="5,5" d="M0 9 l85 0" />
+                </g>
+              </svg>
+            </div>
+            <div class="icon-item ph10 pv5" (click)="onClickDash(2)">
+              <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                <g fill="none" stroke="black" stroke-width="1">
+                  <path stroke-dasharray="10,10" d="M0 9 l85 0" />
+                </g>
+              </svg>
+            </div>
+            <div class="icon-item ph10 pv5" (click)="onClickDash(3)">
+              <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                <g fill="none" stroke="black" stroke-width="1">
+                  <path stroke-dasharray="10,10,2,10" d="M0 9 l85 0" />
+                </g>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="mr5 rel" *ngIf="pen.type">
+          <div class="input" [class.readonly]="readonly" (click)="$event.stopPropagation(); drowdown = 4">
+            <div class="icon-item" [class.hidden]="pen.name !== 'curve'" title="曲线">
+              <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                <g fill="none" stroke="black" stroke-width="1">
+                  <path d="M0 9 a100,50 0 0,1 85,0" />
+                </g>
+              </svg>
+            </div>
+            <div class="icon-item" [class.hidden]="pen.name !== 'polyline'" title="线段">
+              <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                <g fill="none" stroke="black" stroke-width="1">
+                  <path d="M0 4 l40 0 l0 12 l40 0" />
+                </g>
+              </svg>
+            </div>
+            <div class="icon-item" [class.hidden]="pen.name !== 'line'" title="直线">
+              <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                <g fill="none" stroke="black" stroke-width="1">
+                  <path d="M0 9 l85 0" />
+                </g>
+              </svg>
+            </div>
+            <div class="icon-item" [class.hidden]="pen.name !== 'mind'" title="脑图曲线">
+              <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                <g fill="none" stroke="black" stroke-width="1">
+                  <path d="M0 15 C0,8 50,0 85,0" />
+                </g>
+              </svg>
+            </div>
+          </div>
+          <div class="dropdown" *ngIf="!readonly" [class.block]="drowdown === 4">
+            <div class="icon-item ph10 pv5" (click)="onClickName('curve')" title="曲线">
+              <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                <g fill="none" stroke="black" stroke-width="1">
+                  <path d="M0 9 a100,50 0 0,1 85,0" />
+                </g>
+              </svg>
+            </div>
+            <div class="icon-item ph10 pv5" (click)="onClickName('polyline')" title="线段">
+              <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                <g fill="none" stroke="black" stroke-width="1">
+                  <path d="M0 4 l40 0 l0 12 l40 0" />
+                </g>
+              </svg>
+            </div>
+            <div class="icon-item ph10 pv5" (click)="onClickName('line')" title="直线">
+              <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                <g fill="none" stroke="black" stroke-width="1">
+                  <path d="M0 9 l100 0" />
+                </g>
+              </svg>
+            </div>
+            <div class="icon-item ph10 pv5" (click)="onClickName('mind')" title="脑图曲线">
+              <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                <g fill="none" stroke="black" stroke-width="1">
+                  <path d="M0 15 C0,8 50,0 85,0" />
+                </g>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="!pen.type"></div>
+      </div>
+      <div class="flex grid mt5">
+        <div>线条颜色</div>
+        <div>线条宽度（px）</div>
+      </div>
+      <div class="flex grid">
+        <div class="mr5">
+          <div class="input color" [class.readonly]="readonly">
+            <i [(colorPicker)]="pen.strokeStyle" [style.background]="pen.strokeStyle" cpPosition="bottom"
+              cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"
+              (colorPickerChange)="onChangeProp()"></i>
+            <input name="strokeStyle" [(ngModel)]="pen.strokeStyle" [readonly]="readonly" (change)="onChangeProp()" />
+          </div>
+        </div>
+        <div>
+          <input type="number" name="lineWidth" class="input" [(ngModel)]="pen.lineWidth" [uiMin]="0" [uiMax]="100"
+            [readonly]="readonly" (change)="onChangeProp()" />
+        </div>
+      </div>
+      <div *ngIf="pen.type">
+        <div class="flex grid mt5">
+          <div>连线边框</div>
+          <div>边框宽度（px）</div>
+        </div>
+        <div class="flex grid">
+          <div class="mr5">
+            <div class="input color" [class.readonly]="readonly">
+              <i [(colorPicker)]="pen.borderColor" [style.background]="pen.borderColor" cpPosition="bottom"
+                cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"
+                (colorPickerChange)="onChangeProp()"></i>
+              <input name="borderColor" [(ngModel)]="pen.borderColor" [readonly]="readonly" (change)="onChangeProp()" />
+            </div>
+          </div>
+          <div>
+            <input type="number" name="borderWidth" class="input" [(ngModel)]="pen.borderWidth" [uiMin]="0"
+              [uiMax]="100" [readonly]="readonly" (change)="onChangeProp()" />
+          </div>
+        </div>
+      </div>
+      <div *ngIf="selection.pen && !pen.type">
+        <div class="mt5">
+          背景
+        </div>
+        <div>
+          <ui-select class="full" name="bkType" [(ngModel)]="pen.bkType" [options]="bkTypeOptions" [multi]="false"
+            (change)="onChangeBkType()" placeholder="纯色背景" [readonly]="readonly"></ui-select>
+        </div>
+        <div *ngIf="selection.pen && !pen.bkType">
+          <div class="mt5">
+            背景颜色
+          </div>
+          <div class="input color" [class.readonly]="readonly">
+            <i [(colorPicker)]="pen.fillStyle" [style.background]="pen.fillStyle" cpPosition="bottom"
+              cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"
+              (colorPickerChange)="onChangeProp()"></i>
+            <input name="fillStyle" [(ngModel)]="pen.fillStyle" [readonly]="readonly" (change)="onChangeProp()" />
+          </div>
+        </div>
+        <div *ngIf="pen.bkType">
+          <div class="flex grid mt5">
+            <div>开始颜色</div>
+            <div>结束颜色</div>
+          </div>
+          <div class="flex grid">
+            <div class="mr5">
+              <div class="input color" [class.readonly]="readonly">
+                <i [(colorPicker)]="pen.gradientFromColor" [style.background]="pen.gradientFromColor"
+                  cpPosition="bottom" cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"
+                  (colorPickerChange)="onChangeProp()"></i>
+                <input name="gradientFromColor" [(ngModel)]="pen.gradientFromColor" [readonly]="readonly"
+                  (change)="onChangeProp()" />
+              </div>
+            </div>
+            <div>
+              <div class="input color grid-right" [class.readonly]="readonly">
+                <i [(colorPicker)]="pen.gradientToColor" [style.background]="pen.gradientToColor" cpPosition="bottom"
+                  cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"
+                  (colorPickerChange)="onChangeProp()"></i>
+                <input name="gradientToColor" [(ngModel)]="pen.gradientToColor" [readonly]="readonly"
+                  (change)="onChangeProp()" />
+              </div>
+            </div>
+          </div>
+          <div *ngIf="pen.bkType === 1">
+            <div class="mt5">
+              角度（°）
+            </div>
+            <div>
+              <input type="number" name="gradientAngle" class="input full" [(ngModel)]="pen.gradientAngle"
+                [readonly]="readonly" (change)="onChangeProp()" />
+            </div>
+          </div>
+          <div *ngIf="pen.bkType === 2">
+            <div class="mt5">
+              半径（0 - 1之间的小数）
+            </div>
+            <div>
+              <input type="number" name="gradientRadius" class="input full" [(ngModel)]="pen.gradientRadius"
+                [readonly]="readonly" (change)="onChangeProp()" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mt5">
+        透明度（0 - 1）
+      </div>
+      <div>
+        <input type="number" name="globalAlpha" class="input full" [(ngModel)]="pen.globalAlpha" [uiMin]="0" [uiMax]="1"
+          [readonly]="readonly" (change)="onChangeProp()" />
+      </div>
+    </div>
+  </div>
+  <div class="group" *ngIf="selection.pen && selection.pen.type">
+    <div class="title">
+      <div class="full">位置</div>
+      <i *ngIf="show.pos !== false" class="hover iconfont icon-angle-down" (click)="show.pos = false"></i>
+      <i *ngIf="show.pos === false" class="hover iconfont icon-angle-right" (click)="show.pos = true"></i>
+    </div>
+    <div *ngIf="show.pos !== false">
+      <div>
+        起点
+      </div>
+      <div class="flex grid mt5">
+        <div class="mr5">
+          <input type="number" name="x" class="input" [(ngModel)]="pen.from.x" placeholder="X（px）" [uiMin]="0"
+            [uiMax]="5000" [readonly]="readonly" required (change)="onChangeProp()" />
+        </div>
+        <div>
+          <input type="number" name="y" class="input" [(ngModel)]="pen.from.y" placeholder="Y（px）" [uiMin]="0"
+            [uiMax]="5000" [readonly]="readonly" required (change)="onChangeProp()" />
+        </div>
+      </div>
+      <div class="mt5">
+        终点
+      </div>
+      <div class="flex grid">
+        <div class="mr5">
+          <input type="number" name="ex" class="input" [(ngModel)]="pen.to.x" placeholder="X（px）" [uiMin]="0"
+            [uiMax]="5000" [readonly]="readonly" required (change)="onChangeProp()" />
+        </div>
+        <div>
+          <input type="number" name="ey" class="input" [(ngModel)]="pen.to.y" placeholder="Y（px）" [uiMin]="0"
+            [uiMax]="5000" [readonly]="readonly" required (change)="onChangeProp()" />
+        </div>
+      </div>
+      <div class="flex grid mt5">
+        <div class="mr5">起点箭头</div>
+        <div>终点箭头</div>
+      </div>
+      <div class="flex grid">
+        <div class="mr5">
+          <div class="rel">
+            <div class="input" [class.readonly]="readonly" (click)="$event.stopPropagation(); drowdown = 2">
+              <div class="icon-item" [class.hidden]="pen.fromArrow !== ''">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l85 0" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item" [class.hidden]="pen.fromArrow !== 'triangleSolid'">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l85 0" />
+                    <polygon points="0 9,15 4,15 14" fill="#000000" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item" [class.hidden]="pen.fromArrow !== 'triangle'">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l85 0" />
+                    <polygon points="0 9,15 4,15 14" fill="#ffffff" stroke="#000000" stroke-width="1" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item" [class.hidden]="pen.fromArrow !== 'diamondSolid'">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l85 0" />
+                    <polygon points="0 9,10 6,20 9,10 12" fill="#000000" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item" [class.hidden]="pen.fromArrow !== 'diamond'">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l85 0" />
+                    <polygon points="0 9,10 6,20 9,10 12" fill="#ffffff" stroke="#000000" stroke-width="1" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item" [class.hidden]="pen.fromArrow !== 'circleSolid'">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M1 9 l85 0" />
+                    <circle cx="6" cy="9" r="5" fill="#000000" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item" [class.hidden]="pen.fromArrow !== 'circle'">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M1 9 l85 0" />
+                    <circle cx="6" cy="9" r="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item" [class.hidden]="pen.fromArrow !== 'line'">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l85 0" />
+                    <path d="M0 9 l12 6" />
+                    <path d="M0 9 l12 -6" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item" [class.hidden]="pen.fromArrow !== 'lineUp'">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l85 0" />
+                    <path d="M0 9 l12 -6" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item" [class.hidden]="pen.fromArrow !== 'lineDown'">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l85 0" />
+                    <path d="M0 9 l12 6" />
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div class="dropdown" *ngIf="!readonly" [class.block]="drowdown === 2">
+              <div class="icon-item ph10 pv5" (click)="onClickFromArrow('')">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l100 0" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item ph10 pv5" (click)="onClickFromArrow('triangleSolid')">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l85 0" />
+                    <polygon points="0 9,15 4,15 14" fill="#000000" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item ph10 pv5" (click)="onClickFromArrow('triangle')">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l85 0" />
+                    <polygon points="0 9,15 4,15 14" fill="#ffffff" stroke="#000000" stroke-width="1" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item ph10 pv5" (click)="onClickFromArrow('diamondSolid')">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l85 0" />
+                    <polygon points="0 9,10 6,20 9,10 12" fill="#000000" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item ph10 pv5" (click)="onClickFromArrow('diamond')">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l85 0" />
+                    <polygon points="0 9,10 6,20 9,10 12" fill="#ffffff" stroke="#000000" stroke-width="1" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item ph10 pv5" (click)="onClickFromArrow('circleSolid')">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M1 9 l85 0" />
+                    <circle cx="6" cy="9" r="5" fill="#000000" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item ph10 pv5" (click)="onClickFromArrow('circle')">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M1 9 l85 0" />
+                    <circle cx="6" cy="9" r="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item ph10 pv5" (click)="onClickFromArrow('line')">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l85 0" />
+                    <path d="M0 9 l12 6" />
+                    <path d="M0 9 l12 -6" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item ph10 pv5" (click)="onClickFromArrow('lineUp')">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l85 0" />
+                    <path d="M0 9 l12 -6" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item ph10 pv5" (click)="onClickFromArrow('lineDown')">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l85 0" />
+                    <path d="M0 9 l12 6" />
+                  </g>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="rel">
+            <div class="input" [class.readonly]="readonly" (click)="$event.stopPropagation(); drowdown = 3">
+              <div class="icon-item" [class.hidden]="pen.toArrow !== ''">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l80 0" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item" [class.hidden]="pen.toArrow !== 'triangleSolid'">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l79 0" />
+                    <polygon points="79 9,65 4,65 14" fill="#000000" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item" [class.hidden]="pen.toArrow !== 'triangle'">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l79 0" />
+                    <polygon points="79 9,65 4,65 14" fill="#ffffff" stroke="#000000" stroke-width="1" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item" [class.hidden]="pen.toArrow !== 'diamondSolid'">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l79 0" />
+                    <polygon points="79 9,70 6,60 9,70 12" fill="#000000" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item" [class.hidden]="pen.toArrow !== 'diamond'">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l85 0" />
+                    <polygon points="79 9,70 6,60 9,70 12" fill="#ffffff" stroke="#000000" stroke-width="1" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item" [class.hidden]="pen.toArrow !== 'circleSolid'">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M1 9 l78 0" />
+                    <circle cx="74" cy="9" r="5" fill="#000000" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item" [class.hidden]="pen.toArrow !== 'circle'">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M1 9 l78 0" />
+                    <circle cx="74" cy="9" r="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item" [class.hidden]="pen.toArrow !== 'line'">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l78 0" />
+                    <path d="M78 9 l-12 6" />
+                    <path d="M78 9 l-12 -6" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item" [class.hidden]="pen.toArrow !== 'lineUp'">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l78 0" />
+                    <path d="M78 9 l-12 -6" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item" [class.hidden]="pen.toArrow !== 'lineDown'">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l78 0" />
+                    <path d="M78 9 l-12 6" />
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div class="dropdown" *ngIf="!readonly" [class.block]="drowdown === 3">
+              <div class="icon-item ph10 pv5" (click)="onClickToArrow('')">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l100 0" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item ph10 pv5" (click)="onClickToArrow('triangleSolid')">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l85 0" />
+                    <polygon points="79 9,65 4,65 14" fill="#000000" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item ph10 pv5" (click)="onClickToArrow('triangle')">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l85 0" />
+                    <polygon points="79 9,65 4,65 14" fill="#ffffff" stroke="#000000" stroke-width="1" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item ph10 pv5" (click)="onClickToArrow('diamondSolid')">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l85 0" />
+                    <polygon points="79 9,70 6,60 9,70 12" fill="#000000" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item ph10 pv5" (click)="onClickToArrow('diamond')">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l85 0" />
+                    <polygon points="79 9,70 6,60 9,70 12" fill="#ffffff" stroke="#000000" stroke-width="1" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item ph10 pv5" (click)="onClickToArrow('circleSolid')">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M1 9 l78 0" />
+                    <circle cx="74" cy="9" r="5" fill="#000000" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item ph10 pv5" (click)="onClickToArrow('circle')">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M1 9 l78 0" />
+                    <circle cx="74" cy="9" r="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item ph10 pv5" (click)="onClickToArrow('line')">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l78 0" />
+                    <path d="M78 9 l-12 6" />
+                    <path d="M78 9 l-12 -6" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item ph10 pv5" (click)="onClickToArrow('lineUp')">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l78 0" />
+                    <path d="M78 9 l-12 -6" />
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-item ph10 pv5" (click)="onClickToArrow('lineDown')">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <g fill="none" stroke="black" stroke-width="1">
+                    <path d="M0 9 l78 0" />
+                    <path d="M78 9 l-12 6" />
+                  </g>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex grid mt5">
+        <div class="mr5">起点箭头颜色</div>
+        <div>终点箭头颜色</div>
+      </div>
+      <div class="flex grid">
+        <div class="input color mr5" [class.readonly]="readonly">
+          <i [(colorPicker)]="pen.fromArrowColor" [style.background]="pen.fromArrowColor" cpPosition="bottom"
+            cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"
+            (colorPickerChange)="onChangeProp()"></i>
+          <input name="fromArrowColor" [(ngModel)]="pen.fromArrowColor" [readonly]="readonly"
+            (change)="onChangeProp()" />
+        </div>
+        <div class="input color right" [class.readonly]="readonly">
+          <i [(colorPicker)]="pen.toArrowColor" [style.background]="pen.toArrowColor" cpPosition="bottom"
+            cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"
+            (colorPickerChange)="onChangeProp()"></i>
+          <input name="toArrowColor" [(ngModel)]="pen.toArrowColor" [readonly]="readonly" (change)="onChangeProp()" />
+        </div>
+      </div>
+      <div class="flex grid mt5">
+        <div class="mr5">起点箭头大小</div>
+        <div>终点箭头大小</div>
+      </div>
+      <div class="flex grid mt5">
+        <div class="mr5">
+          <input type="number" name="fromArrowSize" class="input" [(ngModel)]="pen.fromArrowSize" [uiMin]="1"
+            [uiMax]="100" [readonly]="readonly" (change)="onChangeProp()" />
+        </div>
+        <div>
+          <input type="number" name="toArrowSize" class="input" [(ngModel)]="pen.toArrowSize" [uiMin]="1" [uiMax]="100"
+            [readonly]="readonly" (change)="onChangeProp()" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="title">
+      <div class="full">文字</div>
+      <i *ngIf="show.text !== false" class="hover iconfont icon-angle-down" (click)="show.text = false"></i>
+      <i *ngIf="show.text === false" class="hover iconfont icon-angle-right" (click)="show.text = true"></i>
+    </div>
+    <div *ngIf="show.text !== false">
+      <div class="flex grid mt5">
+        <div>字体</div>
+        <div>大小</div>
+      </div>
+      <div>
+        <div class="flex grid">
+          <div class="mr5">
+            <input name="fontFamily" class="input full" [(ngModel)]="pen.font.fontFamily" [readonly]="readonly"
+              (change)="onChangeProp()" />
+          </div>
+          <div>
+            <input type="number" name="fontSize" class="input" [(ngModel)]="pen.font.fontSize" uiMin="0" uiMax="500"
+              [readonly]="readonly" (change)="onChangeProp()" />
+          </div>
+        </div>
+
+      </div>
+      <div class="flex grid mt5">
+        <div>颜色</div>
+        <div>背景</div>
+      </div>
+      <div class="flex grid">
+        <div class="mr5">
+          <div class="input color " [class.readonly]="readonly">
+            <i [(colorPicker)]="pen.font.color" [style.background]="pen.font.color" cpPosition="bottom"
+              cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"
+              (colorPickerChange)="onChangeProp()"></i>
+            <input name="fontColor" [(ngModel)]="pen.font.color" [readonly]="readonly" (change)="onChangeProp()" />
+          </div>
+        </div>
+        <div>
+          <div class="input color right" [class.readonly]="readonly">
+            <i [(colorPicker)]="pen.font.background" [style.background]="pen.font.background" cpPosition="bottom"
+              cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"
+              (colorPickerChange)="onChangeProp()"></i>
+            <input name="fontColor" [(ngModel)]="pen.font.background" [readonly]="readonly" (change)="onChangeProp()" />
+          </div>
+        </div>
+      </div>
+      <div class="flex grid mt5">
+        <div>倾斜</div>
+        <div>加粗</div>
+      </div>
+      <div class="flex grid">
+        <div class="mr5">
+          <ui-select name="fontStyle" [(ngModel)]="pen.font.fontStyle" [options]="fontStyleOptions" [multi]="false"
+            (change)="onChangeProp()" placeholder="正常" [readonly]="readonly"></ui-select>
+        </div>
+        <div>
+          <ui-select name="fontWeight" [(ngModel)]="pen.font.fontWeight" [options]="fontWeightOptions" [multi]="false"
+            (change)="onChangeProp()" placeholder="正常" [readonly]="readonly"></ui-select>
+        </div>
+      </div>
+
+      <div class="flex grid mt5">
+        <div>水平对齐</div>
+        <div>垂直对齐</div>
+      </div>
+      <div class="flex grid">
+        <div class="mr5">
+          <ui-select name="textAlign" [(ngModel)]="pen.font.textAlign" [options]="textAlignOptions" [multi]="false"
+            (change)="onChangeProp()" [readonly]="readonly"></ui-select>
+        </div>
+        <div>
+          <ui-select name="textBaseline" [(ngModel)]="pen.font.textBaseline" [options]="textBaselineOptions"
+            [multi]="false" (change)="onChangeProp()" [readonly]="readonly"></ui-select>
+        </div>
+      </div>
+
+      <div class="flex grid mt5">
+        <div>行高</div>
+        <div>最大行数</div>
+      </div>
+      <div class="flex grid">
+        <div class="mr5">
+          <input type="number" name="lineHeight" class="input" [(ngModel)]="pen.font.lineHeight" uiMin="1" uiMax="5"
+            [readonly]="readonly" (change)="onChangeProp()" />
+        </div>
+        <div>
+          <input type="number" name="textMaxLine" class="input" [(ngModel)]="pen.textMaxLine" uiMin="0" uiMax="500"
+            [readonly]="readonly" placeholder="0:自动匹配高度" (change)="onChangeProp()" />
+        </div>
+      </div>
+
+      <div class="flex grid mt5">
+        <div>水平偏移（px）</div>
+        <div>垂直偏移（px）</div>
+      </div>
+      <div class="flex grid">
+        <div class="mr5">
+          <input type="number" name="textOffsetX" class="input" [(ngModel)]="pen.textOffsetX" [readonly]="readonly"
+            (change)="onChangeProp()" />
+        </div>
+        <div>
+          <input type="number" name="textOffsetY" class="input" [(ngModel)]="pen.textOffsetY" [readonly]="readonly"
+            (change)="onChangeProp()" />
+        </div>
+      </div>
+
+      <div *ngIf="selection.pen">
+        <div class="mt5">
+          内容
+        </div>
+        <div>
+          <textarea name="text" class="input full" [(ngModel)]="pen.text" rows="2" [readonly]="readonly"
+            (change)="onChangeProp()"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group" *ngIf="selection.pen && !selection.pen.type">
+    <div class="title">
+      <div class="full">图片</div>
+      <i *ngIf="show.image !== false" class="hover iconfont icon-angle-down" (click)="show.image = false"></i>
+      <i *ngIf="show.image === false" class="hover iconfont icon-angle-right" (click)="show.image = true"></i>
+    </div>
+
+    <div *ngIf="show.image !== false">
+      <div class="gray mb10">图片、字体图标同时存在时，图片优先</div>
+
+      <div class="flex middle input-line">
+        <label>图片选择</label>
+        <div class="pointer icon" (click)="show.imageDlg = true">
+          <img *ngIf="pen.image" [src]="pen.image" style="height: .3rem" />
+          <div *ngIf="!pen.image" class="image-upload">
+            <i class="iconfont icon-add inline"></i>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="show.imageDlg" class="tools">
+        <div class="title flex">
+          <label class="full">选择图片</label>
+          <a (click)="show.imageDlg=false">返回</a>
+        </div>
+        <app-user-images class="block p10" [(image)]="pen.image" (imageChange)="onChangeProp()"
+          style="height: calc(100% - .4rem);overflow: auto;">
+        </app-user-images>
+      </div>
+      <div class="flex grid mt5">
+        <div>宽（px）</div>
+        <div>高（px）</div>
+      </div>
+      <div class="flex grid">
+        <div class="mr5">
+          <input type="number" name="imageWidth" class="input" [(ngModel)]="pen.imageWidth" [uiMin]="0" [uiMax]="5000"
+            (change)="onChangeImgWidth()" [readonly]="readonly" />
+        </div>
+        <div>
+          <input type="number" name="imageHeight" class="input" [(ngModel)]="pen.imageHeight" [uiMin]="0" [uiMax]="5000"
+            (change)="onChangeImgHeight()" [readonly]="readonly" />
+        </div>
+      </div>
+      <div class="mt5">
+        <label class="checkbox">
+          <input name="imageRatio" type="checkbox" [(ngModel)]="pen.imageRatio" (change)="onChangeImgRatio()" />
+          <span>保存图片比例</span>
+        </label>
+      </div>
+
+      <div class="flex input-line middle mv10 pt10 border-top">
+        <label>字体图标</label>
+        <div class="pointer icon" (click)="show.iconDlg = true">
+          <i *ngIf="icon" class="topology {{ icon.class }}"></i>
+          <div *ngIf="!icon" class="image-upload">
+            <i class="iconfont icon-add inline"></i>
+          </div>
+        </div>
+      </div>
+      <div [class.hidden]="!show.iconDlg" class="tools">
+        <div class="title flex middle">
+          <label class="full">选择字体图标</label>
+          <a (click)="show.iconDlg=false">返回</a>
+        </div>
+        <div class="body flex wrap p15" style="height: calc(100% - .4rem);overflow: auto;">
+          <div class="icon" [class.active]="!icon" (click)="onClickIcon()">
+            <div class="blank">空</div>
+          </div>
+          <div class="icon" *ngFor="let item of icons" [class.active]="item.checked" (click)="onClickIcon(item)">
+            <i class="topology {{ item.class }}"></i>
+          </div>
+        </div>
+      </div>
+      <div class="flex middle input-line">
+        <label>字体大小</label>
+        <div>
+          <input type="number" name="iconSize" class="input" [(ngModel)]="pen.iconSize" [uiMin]="0" [uiMax]="500"
+            [readonly]="readonly" placeholder="<=0表示自适应" (change)="onChangeProp()" />
+        </div>
+      </div>
+      <div class="flex middle input-line">
+        <label>字体颜色</label>
+        <div>
+          <div class="input color right" [class.readonly]="readonly">
+            <i [(colorPicker)]="pen.iconColor" [style.background]="pen.iconColor" cpPosition="bottom"
+              cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"
+              (colorPickerChange)="onChangeProp()"></i>
+            <input name="iconColor" [(ngModel)]="pen.iconColor" [readonly]="readonly" (change)="onChangeProp()" />
+          </div>
+        </div>
+      </div>
+
+      <div class="flex middle input-line mv10 pt10 border-top">
+        <label>对齐方式</label>
+        <div>
+          <ui-select name="imageAlign" [(ngModel)]="pen.imageAlign" [options]="iconAligns" [multi]="false"
+            (change)="onChangeProp()" [readonly]="readonly" style="width: 1.5rem"></ui-select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div *ngIf="tab===2">
+  <div class="p10">
+    <button class="button primary full" (click)="onAddEvent()">添加事件</button>
+  </div>
+  <div class="group" *ngFor="let item of pen.events;let i=index">
+    <div class="title">
+      <div class="full">
+        事件
+        <i class="hover iconfont icon-delete ml10" (click)="pen.events.splice(i,1)" style="font-size:0.14rem"></i>
+      </div>
+      <i *ngIf="show['event-' + i] !== false" class="hover iconfont icon-angle-down"
+        (click)="show['event-' + i] = false"></i>
+      <i *ngIf="show['event-' + i] === false" class="hover iconfont icon-angle-right"
+        (click)="show['event-' + i] = true"></i>
+    </div>
+    <div *ngIf="show['event-' + i] !== false" class="mt10">
+      <div class="flex middle input-line mv10 pt10">
+        <label>事件类型</label>
+        <div>
+          <ui-select [(ngModel)]="item.type" [options]="eventTypes" [multi]="false" [readonly]="readonly"
+            style="width: 1.5rem"></ui-select>
+        </div>
+      </div>
+      <div class="flex middle input-line mv10" *ngIf="item.type === 2">
+        <label>消息名称</label>
+        <div>
+          <input class="input" [(ngModel)]="item.name" placeholder="websocket消息名" title="websocket中json格式下的event值" />
+        </div>
+      </div>
+      <div class="flex middle input-line mv10">
+        <label>事件行为</label>
+        <div>
+          <ui-select [(ngModel)]="item.action" [options]="eventActions" [multi]="false" [readonly]="readonly"
+            style="width: 1.5rem"></ui-select>
+        </div>
+      </div>
+      <div class="flex input-line mv10 pt10">
+        <label *ngIf="item.action === 0" class="mt3">链接地址</label>
+        <label *ngIf="item.action === 1" class="mt3">动画标签</label>
+        <label *ngIf="item.action === 2" class="mt3">函数代码</label>
+        <label *ngIf="item.action === 3" class="mt3">函数名称</label>
+        <div>
+          <input *ngIf="item.action === 0 || item.action === 3" class="input" [(ngModel)]="item.value" />
+          <input *ngIf="item.action === 1" class="input" [(ngModel)]="item.value" placeholder="缺省执行自身动画" />
+          <textarea *ngIf="item.action === 2" class="input full" [(ngModel)]="item.value" rows="25"
+            [readonly]="readonly"
+            placeholder="可用参数：pen - 画笔数据。&#10;&#10;如果是websocket事件，params - websocket中json格式下的data"></textarea>
+        </div>
+      </div>
+      <div class="flex middle input-line mv10 pt10" *ngIf="item.action === 3">
+        <label>函数参数</label>
+        <div>
+          <input class="input" [(ngModel)]="item.params" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="tab===3">
+  <div class="group">
+    <div class="title">
+      <div class="full">动画</div>
+      <i *ngIf="show.animate !== false" class="hover iconfont icon-angle-down" (click)="show.animate = false"></i>
+      <i *ngIf="show.animate === false" class="hover iconfont icon-angle-right" (click)="show.animate = true"></i>
+    </div>
+    <div *ngIf="show.animate !== false">
+      <div class="flex mt5">
+        <div class="full flex middle">
+          播放
+          <ui-switch class="inline ml5" [(checked)]="pen.animateStart" (change)="onAnimate()"></ui-switch>
+        </div>
+        <label class="checkbox">
+          <input name="autoPlay" type="checkbox" [(ngModel)]="pen.animatePlay" (change)="onAnimate()"
+            [readonly]="readonly" />
+          <span><span>自动播放</span></span>
+        </label>
+      </div>
+
+      <div *ngIf="selection.pen.type">
+        <div class="flex grid mt5">
+          <div>动画类型</div>
+        </div>
+        <div class="mt5">
+          <ui-select name="node-animate" [(ngModel)]="pen.animateType" [options]="lineAnimateOptions" [multi]="false"
+            (change)="onChangeLineAnimate()" placeholder="水流" [readonly]="readonly"></ui-select>
+        </div>
+        <div class="flex grid mt5">
+          <div>颜色</div>
+          <div *ngIf="!readonly">快慢</div>
+        </div>
+        <div class="flex grid mt5">
+          <div class="mr5">
+            <div class="input color" [class.readonly]="readonly">
+              <i [(colorPicker)]="pen.animateColor" [style.background]="pen.animateColor" cpPosition="bottom"
+                cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"
+                (colorPickerChange)="onAnimate()"></i>
+              <input name="animateColor" [(ngModel)]="pen.animateColor" [readonly]="readonly" (change)="onAnimate()" />
+            </div>
+          </div>
+          <div *ngIf="!readonly">
+            <ui-slider class="block" [(min)]="pen.animateSpan" [options]="{ min: 1, max: 5 }" (change)="onAnimate()">
+            </ui-slider>
+          </div>
+        </div>
+        <div class="mt5">
+          <div class="nowrap">圆点大小（px）：</div>
+          <div>
+            <input type="number" name="animateDotSize" class="input full" [(ngModel)]="pen.animateDotSize"
+              [readonly]="readonly" (change)="onAnimate()" />
+          </div>
+        </div>
+        <div class="mt5">
+          <div class="nowrap">循环次数：</div>
+          <div>
+            <input type="number" name="cycle" class="input full" [(ngModel)]="pen.animateCycle" [readonly]="readonly"
+              (change)="onAnimate()" placeholder="<1无限循环" />
+          </div>
+        </div>
+        <div class="mt5">
+          <div class="nowrap">下个动画：</div>
+          <div>
+            <input name="next" class="input full" [(ngModel)]="pen.nextAnimate" [readonly]="readonly"
+              (change)="onChangeProp()" placeholder="tag" />
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!selection.pen.type" class="mt5">
+        <div class="flex animate">
+          <div class="nowrap">时长：</div>
+          {{ pen.animateDuration / 1000 | number: ".0-3" }}秒
+        </div>
+        <div class="flex animate">
+          <div class="nowrap">特效：</div>
+          <div>
+            <ui-select name="node-animate" [(ngModel)]="pen.animateType" [options]="animateOptions" [multi]="false"
+              (change)="onChangeAnimate()" placeholder="无" [readonly]="readonly"></ui-select>
+          </div>
+        </div>
+        <div class="flex animate">
+          <div class="nowrap"></div>
+          <div>
+            <a *ngIf="pen.animateType === 'custom'" (click)="show.animateDlg=true">设置</a>
+          </div>
+        </div>
+        <div class="flex animate mt5">
+          <div class="nowrap">循环次数：</div>
+          <div>
+            <input type="number" name="cycle" class="input" [(ngModel)]="pen.animateCycle" [readonly]="readonly"
+              (change)="onAnimate()" placeholder="<1无限循环" />
+          </div>
+        </div>
+        <div class="flex animate mt5">
+          <div class="nowrap">下个动画：</div>
+          <div>
+            <input name="next" class="input" [(ngModel)]="pen.nextAnimate" [readonly]="readonly"
+              (change)="onChangeProp()" placeholder="tag" />
+          </div>
+        </div>
+        <div *ngIf="show.animateDlg" class="tools">
+          <div class="title flex middle">
+            <label class="full">节点动画</label>
+            <a (click)="show.animateDlg=false">返回</a>
+          </div>
+          <div style="height: calc(100% - .4rem);overflow: auto;">
+            <div class="ph20 pv10 border-bottom" *ngFor="let item of pen.animateFrames; let i = index">
+              <div class="flex middle">
+                <label class="full bold" title="当前帧 / 总帧数">帧：{{ i + 1 }} / {{ pen.animateFrames.length }}
+                </label>
+                <i class="iconfont icon-arrow-up hover mr10" (click)="onFrameUp(i)"></i>
+                <i class="iconfont icon-arrow-down hover mr10" (click)="onFrameDown(i)"></i>
+                <i class="iconfont icon-delete hover mr20" (click)="onRemoveFrame(i)" style="font-size: 0.13rem"></i>
+                <i *ngIf="item.show !== false" class="hover iconfont icon-angle-down" (click)="item.show=false"></i>
+                <i *ngIf="item.show === false" class="hover iconfont icon-angle-right" (click)="item.show=true"></i>
+              </div>
+              <div *ngIf="item.show !== false">
+                <div class="group">
+                  <div class="mr15">时长（毫秒）</div>
+                  <div class="mr5">
+                    <input type="number" name="duration{{ i }}" class="input" [(ngModel)]="item.duration"
+                      [readonly]="readonly" (change)="onAnimateDuration()" />
+                  </div>
+                </div>
+                <div class="group mt10">
+                  <div class="bold">位置和大小</div>
+                  <div class="flex grid">
+                    <div>X（px）</div>
+                    <div>Y（px）</div>
+                  </div>
+                  <div class="flex grid mt5">
+                    <div class="mr5">
+                      <input type="number" name="x{{ i }}" class="input" [(ngModel)]="item.state.rect.x" [uiMin]="0"
+                        [uiMax]="5000" [readonly]="readonly" required (change)="onAnimate()" />
+                    </div>
+                    <div>
+                      <input type="number" name="y{{ i }}" class="input" [(ngModel)]="item.state.rect.y" [uiMin]="0"
+                        [uiMax]="5000" [readonly]="readonly" required (change)="onAnimate()" />
+                    </div>
+                  </div>
+                  <div class="flex grid mt5">
+                    <div>宽（px）</div>
+                    <div>高（px）</div>
+                  </div>
+                  <div class="flex grid">
+                    <div class="mr5">
+                      <input type="number" name="width{{ i }}" class="input" [(ngModel)]="item.state.rect.width"
+                        [uiMin]="0" [uiMax]="5000" [readonly]="readonly" required (change)="onAnimate()" />
+                    </div>
+                    <div>
+                      <input type="number" name="height{{ i }}" class="input" [(ngModel)]="item.state.rect.height"
+                        [uiMin]="0" [uiMax]="5000" [readonly]="readonly" required (change)="onAnimate()" />
+                    </div>
+                  </div>
+                  <div *ngIf="pen.is3D">
+                    <div class="flex grid mt5">
+                      <div>Z（px）</div>
+                      <div></div>
+                    </div>
+                    <div class="flex grid">
+                      <div class="mr5">
+                        <input type="number" name="z{{ i }}" class="input" [(ngModel)]="item.state.z" [uiMin]="0"
+                          [uiMax]="5000" [readonly]="readonly" (change)="onAnimate()" />
+                      </div>
+                      <div></div>
+                    </div>
+                  </div>
+                  <div class="flex grid mt5">
+                    <div title="百分比%对应的小数值">圆角（0 - 1）</div>
+                    <div>旋转（°）</div>
+                  </div>
+                  <div class="flex grid">
+                    <div class="mr5">
+                      <input type="number" name="borderRadius{{ i }}" class="input"
+                        [(ngModel)]="item.state.borderRadius" [uiMin]="0" [uiMax]="1" [readonly]="readonly"
+                        (change)="onAnimate()" />
+                    </div>
+                    <div>
+                      <input type="number" name="rotate{{ i }}" class="input" [(ngModel)]="item.state.rotate"
+                        [uiMin]="0" [uiMax]="360" [readonly]="readonly" (change)="onAnimate()" />
+                    </div>
+                  </div>
+                </div>
+                <div class="group mt10">
+                  <div class="bold">外观</div>
+                  <div>边框样式</div>
+                  <div class="mr5 rel">
+                    <div class="input" [class.readonly]="readonly" (click)="$event.stopPropagation(); drowdown = 11">
+                      <div class="icon-item" [class.hidden]="item.state.dash">
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                          <g fill="none" stroke="black" stroke-width="1">
+                            <path d="M0 9 l85 0" />
+                          </g>
+                        </svg>
+                      </div>
+                      <div class="icon-item" [class.hidden]="item.state.dash !== 1">
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                          <g fill="none" stroke="black" stroke-width="1">
+                            <path stroke-dasharray="5,5" d="M0 9 l85 0" />
+                          </g>
+                        </svg>
+                      </div>
+                      <div class="icon-item" [class.hidden]="item.state.dash !== 2">
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                          <g fill="none" stroke="black" stroke-width="1">
+                            <path stroke-dasharray="10,10" d="M0 9 l85 0" />
+                          </g>
+                        </svg>
+                      </div>
+                      <div class="icon-item" [class.hidden]="item.state.dash !== 3">
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                          <g fill="none" stroke="black" stroke-width="1">
+                            <path stroke-dasharray="10,10,2,10" d="M0 9 l85 0" />
+                          </g>
+                        </svg>
+                      </div>
+                    </div>
+                    <div class="dropdown" *ngIf="!readonly" [class.block]="drowdown === 11">
+                      <div class="icon-item ph10 pv5" (click)="onClickAnimateDash(item.state, 0)">
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                          <g fill="none" stroke="black" stroke-width="1">
+                            <path d="M0 9 l85 0" />
+                          </g>
+                        </svg>
+                      </div>
+                      <div class="icon-item ph10 pv5" (click)="onClickAnimateDash(item.state, 1)">
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                          <g fill="none" stroke="black" stroke-width="1">
+                            <path stroke-dasharray="5,5" d="M0 9 l85 0" />
+                          </g>
+                        </svg>
+                      </div>
+                      <div class="icon-item ph10 pv5" (click)="onClickAnimateDash(item.state, 2)">
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                          <g fill="none" stroke="black" stroke-width="1">
+                            <path stroke-dasharray="10,10" d="M0 9 l85 0" />
+                          </g>
+                        </svg>
+                      </div>
+                      <div class="icon-item ph10 pv5" (click)="onClickAnimateDash(item.state, 3)">
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                          <g fill="none" stroke="black" stroke-width="1">
+                            <path stroke-dasharray="10,10,2,10" d="M0 9 l85 0" />
+                          </g>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex grid mt5">
+                    <div>边框颜色</div>
+                    <div>线宽（px）</div>
+                  </div>
+                  <div class="flex grid">
+                    <div class="mr5">
+                      <div class="input color" [class.readonly]="readonly">
+                        <i [(colorPicker)]="item.state.strokeStyle" [style.background]="item.state.strokeStyle"
+                          cpPosition="bottom" cpAlphaChannel="always" cpOutputFormat="hex"
+                          [cpPresetColors]="cpPresetColors" (colorPickerChange)="onAnimate()"></i>
+                        <input name="strokeStyle{{ i }}" [(ngModel)]="item.state.strokeStyle" [readonly]="readonly"
+                          (change)="onAnimate()" />
+                      </div>
+                    </div>
+                    <div>
+                      <input type="number" name="lineWidth{{ i }}" class="input" [(ngModel)]="item.state.lineWidth"
+                        [uiMin]="0" [uiMax]="100" [readonly]="readonly" (change)="onAnimate()" />
+                    </div>
+                  </div>
+                  <div class="flex grid mt5">
+                    <div>背景颜色</div>
+                    <div>透明度（0 - 1）</div>
+                  </div>
+                  <div class="flex grid">
+                    <div class="mr5">
+                      <div class="input color" [class.readonly]="readonly">
+                        <i [(colorPicker)]="item.state.fillStyle" [style.background]="item.state.fillStyle"
+                          cpPosition="bottom" cpAlphaChannel="always" cpOutputFormat="hex"
+                          [cpPresetColors]="cpPresetColors" (colorPickerChange)="onAnimate()"></i>
+                        <input name="fillStyle{{ i }}" [(ngModel)]="item.state.fillStyle" [readonly]="readonly"
+                          (change)="onAnimate()" />
+                      </div>
+                    </div>
+                    <div>
+                      <input type="number" name="globalAlpha{{ i }}" class="input" [(ngModel)]="item.state.globalAlpha"
+                        [uiMin]="0" [uiMax]="1" [readonly]="readonly" (change)="onAnimate()" />
+                    </div>
+                  </div>
+                </div>
+                <div class="group mt10">
+                  <div class="title">
+                    <div class="full">文字</div>
+                  </div>
+                  <div>
+                    <div class="flex grid mt5">
+                      <div>字体</div>
+                      <div>大小</div>
+                    </div>
+                    <div>
+                      <div class="flex grid">
+                        <div class="mr5">
+                          <input class="input full" [(ngModel)]="item.state.font.fontFamily" [readonly]="readonly"
+                            (change)="onAnimate()" />
+                        </div>
+                        <div>
+                          <input type="number" class="input" [(ngModel)]="item.state.font.fontSize" uiMin="0"
+                            uiMax="500" [readonly]="readonly" (change)="onAnimate()" />
+                        </div>
+                      </div>
+
+                    </div>
+                    <div class="flex grid mt5">
+                      <div>颜色</div>
+                      <div>背景</div>
+                    </div>
+                    <div class="flex grid">
+                      <div class="mr5">
+                        <div class="input color right" [class.readonly]="readonly">
+                          <i [(colorPicker)]="item.state.font.color" [style.background]="item.state.font.color"
+                            cpPosition="bottom" cpAlphaChannel="always" cpOutputFormat="hex"
+                            [cpPresetColors]="cpPresetColors" (colorPickerChange)="onAnimate()"></i>
+                          <input [(ngModel)]="item.state.font.color" [readonly]="readonly" (change)="onAnimate()" />
+                        </div>
+                      </div>
+                      <div>
+                        <div class="input color" [class.readonly]="readonly">
+                          <i [(colorPicker)]="item.state.font.background"
+                            [style.background]="item.state.font.background" cpPosition="bottom" cpAlphaChannel="always"
+                            cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"
+                            (colorPickerChange)="onAnimate()"></i>
+                          <input [(ngModel)]="item.state.font.background" [readonly]="readonly"
+                            (change)="onAnimate()" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex grid mt5">
+                      <div>倾斜</div>
+                      <div>加粗</div>
+                    </div>
+                    <div class="flex grid">
+                      <div class="mr5">
+                        <ui-select [(ngModel)]="item.state.font.fontStyle" [options]="fontStyleOptions" [multi]="false"
+                          (change)="onAnimate()" placeholder="正常" [readonly]="readonly"></ui-select>
+                      </div>
+                      <div>
+                        <ui-select [(ngModel)]="item.state.font.fontWeight" [options]="fontWeightOptions"
+                          [multi]="false" (change)="onAnimate()" placeholder="正常" [readonly]="readonly"></ui-select>
+                      </div>
+                    </div>
+
+                    <div class="flex grid mt5">
+                      <div>水平对齐</div>
+                      <div>垂直对齐</div>
+                    </div>
+                    <div class="flex grid">
+                      <div class="mr5">
+                        <ui-select [(ngModel)]="item.state.font.textAlign" [options]="textAlignOptions" [multi]="false"
+                          (change)="onAnimate()" [readonly]="readonly"></ui-select>
+                      </div>
+                      <div>
+                        <ui-select [(ngModel)]="item.state.font.textBaseline" [options]="textBaselineOptions"
+                          [multi]="false" (change)="onAnimate()" [readonly]="readonly"></ui-select>
+                      </div>
+                    </div>
+
+                    <div class="flex grid mt5">
+                      <div>水平偏移（px）</div>
+                      <div>垂直偏移（px）</div>
+                    </div>
+                    <div class="flex grid">
+                      <div class="mr5">
+                        <input type="number" class="input" [(ngModel)]="item.state.textOffsetX" [readonly]="readonly"
+                          (change)="onAnimate()" />
+                      </div>
+                      <div>
+                        <input type="number" class="input" [(ngModel)]="item.state.textOffsetY" [readonly]="readonly"
+                          (change)="onAnimate()" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="ph20 mv20">
+              <button class="button primary" (click)="onAddFrame()">
+                + 添加帧
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="title">
+      <div class="full">视频</div>
+      <i *ngIf="show.video !== false" class="hover iconfont icon-angle-down" (click)="show.video = false"></i>
+      <i *ngIf="show.video === false" class="hover iconfont icon-angle-right" (click)="show.video = true"></i>
+    </div>
+
+    <div *ngIf="show.video !== false">
+      <div>音频URL</div>
+      <div>
+        <input name="audio" class="input full" [(ngModel)]="pen.audio" [readonly]="readonly"
+          (change)="onChangeProp()" />
+      </div>
+      <div *ngIf="pen.name === 'div'">
+        <div class="mt5">视频URL</div>
+        <div>
+          <input name="video" class="input full" [(ngModel)]="pen.video" [readonly]="readonly"
+            (change)="onChangeProp()" />
+        </div>
+      </div>
+      <div class="mt5">播放方式</div>
+      <div>
+        <ui-select class="full" name="play" [(ngModel)]="pen.play" [options]="playOptions" [multi]="false"
+          (change)="onChangeProp()" placeholder="手动播放" [readonly]="readonly"></ui-select>
+      </div>
+      <div class="mt5">下个播放：</div>
+      <div>
+        <input name="nextPlay" class="input full" [(ngModel)]="pen.nextPlay" [readonly]="readonly"
+          (change)="onChangeProp()" placeholder="tag" />
+      </div>
+      <div class="mt5">
+        <label class="checkbox">
+          <input name="loop" type="checkbox" [(ngModel)]="pen.playLoop" (change)="onChangeProp()" />
+          <span>循环播放</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="title">
+      <div class="full">外部网页</div>
+      <i *ngIf="show.iframe !== false" class="hover iconfont icon-angle-down" (click)="show.iframe = false"></i>
+      <i *ngIf="show.iframe === false" class="hover iconfont icon-angle-right" (click)="show.iframe = true"></i>
+    </div>
+
+    <div *ngIf="show.iframe !== false">
+      <div class="mt5">网页URL</div>
+      <div>
+        <input name="iframe" class="input full" [(ngModel)]="pen.iframe" [readonly]="readonly"
+          (change)="onChangeProp()" />
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="title">
+      <div class="full">鼠标提示</div>
+      <i *ngIf="show.tip !== false" class="hover iconfont icon-angle-down" (click)="show.tip = false"></i>
+      <i *ngIf="show.tip === false" class="hover iconfont icon-angle-right" (click)="show.tip = true"></i>
+    </div>
+
+    <div *ngIf="show.tip !== false">
+      <div class="mt5">Markdown/html </div>
+      <div>
+        <textarea name="markdown" class="input full" [(ngModel)]="pen.markdown" rows="3" [readonly]="readonly"
+          (change)="onChangeProp()"></textarea>
+      </div>
+      <div class="mt5">原生title</div>
+      <div>
+        <textarea name="title" class="input full" [(ngModel)]="pen.title" rows="3" [readonly]="readonly"
+          (change)="onChangeProp()"></textarea>
+      </div>
+      <div class="mt5">HTMLElement ID</div>
+      <div>
+        <input name="tipId" class="input full" [(ngModel)]="pen.tipId" [readonly]="readonly"
+          (change)="onChangeProp()" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="tab===4">
+  <div class="group">
+    <b>ID：</b>
+    {{pen.id}}
+  </div>
+
+  <div class="group">
+    <div class="title">
+      <div class="full">标签</div>
+      <i *ngIf="show.label !== false" class="hover iconfont icon-angle-down" (click)="show.label = false"></i>
+      <i *ngIf="show.label === false" class="hover iconfont icon-angle-right" (click)="show.label = true"></i>
+    </div>
+    <div *ngIf="show.label !== false" class="mt10">
+      <div>
+        <label class="label mr5 mb5" *ngFor="let item of pen.tags; let i = index">
+          {{ item }}
+          <i class="iconfont icon-delete ml5 hover" (click)="pen.tags.splice(i, 1)"></i>
+        </label>
+      </div>
+      <div *ngIf="!readonly">
+        <input name="tag" class="input full" [(ngModel)]="tag" placeholder="按回车键添加"
+          (keydown.enter)="pen.tags.push(tag); tag = ''" />
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="flex">
+      <div class="full flex">
+        <div class="title">数据</div>
+        <label class="checkbox ml20">
+          <input type="checkbox" [(ngModel)]="customInput" [readonly]="!canProps" (change)="onCustomInput()" />
+          <span>自定义输入</span>
+        </label>
+      </div>
+      <i *ngIf="show.data !== false" class="hover iconfont icon-angle-down" (click)="show.data = false"></i>
+      <i *ngIf="show.data === false" class="hover iconfont icon-angle-right" (click)="show.data = true"></i>
+    </div>
+    <div *ngIf="show.data !== false && !customInput" class="mt10">
+      <div *ngIf="pen.data">
+        <div *ngFor="let item of pen.data;let i=index" class="flex mb10">
+          <input class="input" style="width: 0.7rem;" [(ngModel)]="item.key" placeholder="属性名">
+          <label class="mh5">=</label>
+          <input class="input" style="width: 1rem;" [(ngModel)]="item.value" placeholder="属性值">
+          <i class="iconfont icon-delete ml5" (click)="pen.data.splice(i,1)"></i>
+        </div>
+      </div>
+      <button class="button primary full" (click)="onAddProps()">+ 新增属性</button>
+    </div>
+    <div *ngIf="show.data !== false && customInput" class="mt10">
+      <textarea name="data" class="input full" [(ngModel)]="data" rows="29" [readonly]="readonly"
+        (change)="onChangeProp()"></textarea>
+    </div>
+  </div>
+
+</div>
+
+<div *ngIf="tab===5" class="tree">
+  <div *ngIf="selection.pen">
+    <app-pen-tree-item [pen]="selection.pen"></app-pen-tree-item>
+  </div>
+  <div *ngIf="selection.pens">
+    <app-pen-tree-item *ngFor="let item of selection.pens" [pen]="item" (selected)="onSelect($event)">
+    </app-pen-tree-item>
+  </div>
+</div>

@@ -1,0 +1,46 @@
+<app-workspace-header *ngIf="canvas && data" [file]="data" [data]="canvas.data" (event)="onMenu($event)">
+</app-workspace-header>
+<div class="flex">
+  <div id="tools" class="tools">
+    <app-tools (edit)="onEditTool($event)"></app-tools>
+  </div>
+  <div class="full" (contextmenu)="onContextMenu($event)">
+    <svg *ngIf="canvas && canvas.data.grid" class="svg-grid" width="100%" height="100%" [style.height]="canvasHeight"
+      xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+          <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#f3f3f3" stroke-width="1" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid)" />
+    </svg>
+    <div #workspace></div>
+  </div>
+  <div class="props">
+    <div class="pv5">
+      <app-file-props *ngIf="!selection" [data]="data" [canvas]="canvas"></app-file-props>
+      <app-pen-props *ngIf="selection" [selection]="selection" [canvas]="canvas" [readonly]="locked">
+      </app-pen-props>
+    </div>
+  </div>
+</div>
+<app-context-menu [contextmenu]="contextmenu" [canvas]="canvas" [selection]="selection" [locked]="locked">
+</app-context-menu>
+
+<div class="modal" *ngIf="divNode">
+  <div class="modal-content">
+    <div class="modal-header pointer" uiDivMove [isHead]="true">
+      <div class="caption">添加视频/网页</div>
+      <i class="fr iconfont icon-close" (click)="divNode = null"></i>
+    </div>
+    <div class="modal-body"></div>
+    <div class="modal-footer">
+      <button type="button" class="button mr10" (click)="divNode = null">
+        取消
+      </button>
+      <button type="button" class="button primary" (click)="divNode = null">
+        确定
+      </button>
+    </div>
+  </div>
+</div>

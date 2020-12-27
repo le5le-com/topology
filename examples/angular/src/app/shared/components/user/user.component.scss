@@ -1,0 +1,46 @@
+@import "src/variables";
+@import "~le5le-ui/variables";
+
+.default {
+  a {
+    color: $color !important;
+
+    text-decoration: none;
+    &:hover {
+      color: $color-primary !important;
+    }
+  }
+
+  .button {
+    background-color: $color-primary;
+    border-color: $color-primary;
+    color: #fff !important;
+    &:hover {
+      background-color: rgba($color: #fff, $alpha: 0.05);
+    }
+  }
+
+  .dropdown {
+    .item:hover {
+      a:hover {
+        color: #fff !important;
+      }
+    }
+  }
+}
+
+.transparent {
+  a {
+    &:hover {
+      color: #fff !important;
+    }
+  }
+
+  .button {
+    background-color: transparent;
+    border-color: #fff;
+    &:hover {
+      background-color: rgba($color: #fff, $alpha: 0.05);
+    }
+  }
+}

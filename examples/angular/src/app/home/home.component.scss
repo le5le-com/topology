@@ -1,0 +1,168 @@
+@import "src/variables";
+@import "~le5le-ui/variables";
+
+$color-border: #ddd;
+
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: transparent;
+  z-index: 1;
+
+  &:hover {
+    background-color: rgba($color: #fff, $alpha: 0.1);
+  }
+}
+
+.bars {
+  position: relative;
+  article {
+    position: relative;
+    display: none;
+    height: 5rem;
+    color: #fff;
+    padding-left: 1.7rem;
+
+    header {
+      font-size: 0.56rem;
+      padding-top: 1rem;
+    }
+
+    p {
+      margin-top: 0.1rem;
+      font-size: 0.24rem;
+      line-height: 1.6;
+      white-space: pre-line;
+      z-index: 1;
+    }
+
+    .button {
+      font-size: 0.2rem;
+      color: #fff;
+      border-color: #fff;
+      background: transparent;
+      padding: 0 0.4rem;
+      margin-top: 0.5rem;
+      line-height: 2;
+      &:hover {
+        color: #fff !important;
+        text-decoration: none;
+      }
+    }
+
+    img {
+      position: absolute;
+      bottom: 10%;
+      right: 4%;
+      height: 70%;
+      opacity: 0.7;
+    }
+
+    &.active {
+      display: block;
+    }
+  }
+
+  .dots {
+    position: absolute;
+    bottom: 0.15rem;
+    width: 100%;
+    margin: auto;
+
+    i {
+      display: inline-block;
+      width: 16px;
+      height: 6px;
+      background-color: #fff;
+      opacity: 0.3;
+      margin: 0 0.03rem;
+      cursor: pointer;
+
+      &.active {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+section {
+  padding: 1rem 0;
+  h1 {
+    text-align: center;
+    font-size: 0.3rem;
+    line-height: 1;
+    font-weight: normal;
+  }
+
+  h2 {
+    text-align: center;
+    font-size: 0.18rem;
+    line-height: 1;
+    font-weight: normal;
+    padding: 0.2rem 0;
+  }
+}
+
+.classes {
+  .flex {
+    justify-content: space-between;
+    text-align: center;
+
+    & > .item {
+      display: block;
+      width: 3rem;
+      margin-top: 0.2rem;
+      border: 1px solid $color-border;
+      padding: 0.1rem;
+      position: relative;
+
+      img {
+        max-width: 100%;
+        height: 1.2rem;
+      }
+
+      .title {
+        display: block;
+        text-align: center;
+        line-height: 2;
+        font-size: 0.16rem;
+        color: #333;
+      }
+
+      &:hover {
+        border-color: $color-primary;
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+.vision {
+  background-color: #fafafa;
+
+  .flex {
+    & > div {
+      width: 2.7rem;
+      margin-top: 0.2rem;
+
+      .iconfont {
+        font-size: 0.24rem;
+        line-height: 1;
+        color: #ff4d4f;
+        margin-right: 0.1rem;
+      }
+
+      .title {
+        font-size: 0.2rem;
+      }
+
+      .desc {
+        font-size: 0.14rem;
+        line-height: 0.24rem;
+        white-space: pre-line;
+      }
+    }
+  }
+}
