@@ -1,3 +1,4 @@
+import { Store } from 'le5le-store';
 import { Point } from '../../models/point';
 
 export function triangleSolid(
@@ -25,10 +26,10 @@ export function triangleSolid(
   ctx.stroke();
   if (fillStyle) {
     ctx.fillStyle = fillStyle;
+    ctx.fill();
   }
-  ctx.fill();
 }
 
 export function triangle(ctx: CanvasRenderingContext2D, from: Point, to: Point, size: number) {
-  triangleSolid(ctx, from, to, size, '#fff');
+  triangleSolid(ctx, from, to, size, Store.get('LT:bkColor') || '#fff');
 }

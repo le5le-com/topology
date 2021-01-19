@@ -445,10 +445,7 @@ export class Line extends Pen {
       if (++this.animateCycleIndex >= this.animateCycle && this.animateCycle > 0) {
         this.animateStart = 0;
         this.animatePos = 0;
-        Store.set(this.generateStoreKey('animateEnd'), {
-          type: 'line',
-          data: this,
-        });
+        Store.set(this.generateStoreKey('animateEnd'), this);
         return;
       }
 
@@ -491,7 +488,7 @@ export class Line extends Pen {
     Store.set(this.generateStoreKey('pts-') + this.id, null);
   }
 
-  scale(scale: number, center: Point) {
+  scale(scale: number, center: { x: number; y: number }) {
     this.from.x = center.x - (center.x - this.from.x) * scale;
     this.from.y = center.y - (center.y - this.from.y) * scale;
     this.to.x = center.x - (center.x - this.to.x) * scale;

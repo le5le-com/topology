@@ -434,7 +434,7 @@ export abstract class Pen {
   abstract calcRectByParent(parent: Pen): void;
   abstract draw(ctx: CanvasRenderingContext2D): void;
   abstract translate(x: number, y: number): void;
-  abstract scale(scale: number, center?: Point): void;
+  abstract scale(scale: number, center?: { x: number; y: number }): void;
   abstract hit(point: { x: number; y: number }, padding?: number): any;
   abstract clone(): Pen;
   abstract initAnimate(): void;

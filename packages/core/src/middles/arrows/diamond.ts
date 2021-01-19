@@ -1,12 +1,7 @@
+import { Store } from 'le5le-store';
 import { Point } from '../../models/point';
 
-export function diamondSolid(
-  ctx: CanvasRenderingContext2D,
-  from: Point,
-  to: Point,
-  size: number,
-  fillStyle?: string
-) {
+export function diamondSolid(ctx: CanvasRenderingContext2D, from: Point, to: Point, size: number, fillStyle?: string) {
   size += ctx.lineWidth * 3;
   const r = size / 2;
   let arrowWidth = ctx.lineWidth / 10;
@@ -27,10 +22,10 @@ export function diamondSolid(
   ctx.stroke();
   if (fillStyle) {
     ctx.fillStyle = fillStyle;
+    ctx.fill();
   }
-  ctx.fill();
 }
 
 export function diamond(ctx: CanvasRenderingContext2D, from: Point, to: Point, size: number) {
-  diamondSolid(ctx, from, to, size, '#fff');
+  diamondSolid(ctx, from, to, size, Store.get('LT:bkColor') || '#fff');
 }

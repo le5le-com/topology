@@ -1,7 +1,7 @@
 import { Store } from 'le5le-store';
 
 import { Node } from '../../models/node';
-import { Pen } from '@topology/core/models/pen';
+import { Pen } from '../../models/pen';
 
 // getWords: Get the word array from text. A single Chinese character is a word.
 export function getWords(txt: string) {

@@ -15,7 +15,6 @@ export function echarts(ctx: CanvasRenderingContext2D, node: Node) {
   if (typeof node.data === 'string') {
     node.data = JSON.parse(node.data);
   }
-
   if (!node.data.echarts) {
     return;
   }
@@ -32,10 +31,7 @@ export function echarts(ctx: CanvasRenderingContext2D, node: Node) {
     document.body.appendChild(echartsObjs[node.id].div);
     // 添加当前节点到div层
     node.addToDiv();
-    echartsObjs[node.id].chart = echarts.init(
-      echartsObjs[node.id].div,
-      node.data.echarts.theme
-    );
+    echartsObjs[node.id].chart = echarts.init(echartsObjs[node.id].div, node.data.echarts.theme);
     node.elementRendered = false;
 
     // 等待父div先渲染完成，避免初始图表控件太大

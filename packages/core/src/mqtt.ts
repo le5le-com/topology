@@ -1,4 +1,4 @@
-import * as mqtt from './mqtt.min.js';
+import * as mqtt from 'mqtt/dist/mqtt.min.js';
 
 import { EventAction, EventType, TopologyData } from './models';
 import { Pen, PenType } from './models/pen';

@@ -163,7 +163,7 @@ export class AnimateLayer extends Layer {
 
     this.timer = requestAnimationFrame(() => {
       const now = Date.now();
-      if (now - this.lastNow < 30) {
+      if (now - this.lastNow < this.options.refresh) {
         this.animate();
         return;
       }

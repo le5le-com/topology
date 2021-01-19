@@ -1,6 +1,6 @@
 {
   "name": "@topology/core",
-  "version": "0.3.20",
+  "version": "0.3.24",
   "description": "A diagram/topology tool by js.",
   "main": "index.js",
   "types": "index.d.ts",
@@ -25,7 +25,8 @@
   "homepage": "https://github.com/le5le-com/topology#readme",
   "dependencies": {
     "le5le-store": "^1.0.7",
-    "mitt": "^2.1.0"
+    "mitt": "^2.1.0",
+    "mqtt": "^4.2.6"
   },
   "publishConfig": {
     "access": "public"

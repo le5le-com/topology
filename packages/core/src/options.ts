@@ -70,11 +70,13 @@ export interface Options {
   gridSize?: number;
   rule?: boolean;
   ruleColor?: string;
+  refresh?: number;
   on?: (event: string, data: any) => void;
 }
 
 export const DefalutOptions: Options = {
   cacheLen: 30,
+  refresh: 30,
   font: {
     color: '#222222',
     fontFamily: '"Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial',
