@@ -514,7 +514,8 @@ export class ActiveLayer extends Layer {
       if (item instanceof Node) {
         const tmp = new Node(item, true);
         tmp.setTID(TID);
-        tmp.data = item.data;
+        tmp.data = null;
+        // 暂时修复Echarts图表不显示问题(复制新的图表, 旧的图表不显示)
         tmp.fillStyle = null;
         tmp.bkType = 0;
         tmp.icon = '';
