@@ -14,8 +14,10 @@ export function circleSolid(ctx: CanvasRenderingContext2D, from: Point, to: Poin
   ctx.stroke();
   if (fillStyle) {
     ctx.fillStyle = fillStyle;
-    ctx.fill();
+  } else {
+    ctx.fillStyle = ctx.strokeStyle;
   }
+  ctx.fill();
 }
 
 export function circle(ctx: CanvasRenderingContext2D, from: Point, to: Point, size: number) {

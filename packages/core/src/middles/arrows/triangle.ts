@@ -26,8 +26,10 @@ export function triangleSolid(
   ctx.stroke();
   if (fillStyle) {
     ctx.fillStyle = fillStyle;
-    ctx.fill();
+  } else {
+    ctx.fillStyle = ctx.strokeStyle;
   }
+  ctx.fill();
 }
 
 export function triangle(ctx: CanvasRenderingContext2D, from: Point, to: Point, size: number) {

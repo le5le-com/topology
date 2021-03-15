@@ -56,12 +56,15 @@ import { messageIconRect, messageTextRect } from './nodes/message.rect';
 import { messageAnchors } from './nodes/message.anchor';
 import { file } from './nodes/file';
 import { imageIconRect, imageTextRect } from './nodes/image.rect';
+import { imageAnchors } from './nodes/image.anchor';
 import { cube } from './nodes/cube';
 import { cubeAnchors } from './nodes/cube.anchor';
 import { cubeIconRect, cubeTextRect } from './nodes/cube.rect';
 import { people } from './nodes/people';
 import { peopleIconRect, peopleTextRect } from './nodes/people.rect';
 import { rectangleIconRect, rectangleTextRect } from './nodes/rectangle.rect';
+import { graffiti } from './nodes/graffiti';
+import { graffitiAnchors } from './nodes/graffiti.anchor';
 
 // Functions of drawing a node.
 export const drawNodeFns: any = {};
@@ -79,14 +82,16 @@ export const drawLineFns: any = {};
 export const drawArrowFns: any = {};
 
 function init() {
-  console.log('Init middles.');
-
   // ********Default nodes.*******
   // Combine
   drawNodeFns.combine = rectangle;
 
   // Div
   drawNodeFns.div = rectangle;
+
+  // graffiti
+  drawNodeFns.graffiti = graffiti;
+  anchorsFns.graffiti = graffitiAnchors;
 
   // Square
   drawNodeFns.square = rectangle;
@@ -175,9 +180,10 @@ function init() {
   textRectFns.line = lineTextRect;
 
   // Image
-  drawNodeFns.image = (ctx: CanvasRenderingContext2D, node: Rect) => {};
+  drawNodeFns.image = (ctx: CanvasRenderingContext2D, node: Rect) => { };
   iconRectFns.image = imageIconRect;
   textRectFns.image = imageTextRect;
+  anchorsFns.image = imageAnchors;
 
   // Cube
   drawNodeFns.cube = cube;
@@ -278,6 +284,9 @@ export function registerLine(
   controlPointsFn?: (line: Line) => void,
   dockControlPointFn?: (point: Point, line: Line) => void,
   pointInFn?: (point: Point, line: Line) => boolean,
+  getLength?: (line: Line) => void,
+  getCenter?: (line: Line) => void,
+  getPointByPos?: (line: Line) => void,
   force = true
 ) {
   // Exist
@@ -289,8 +298,11 @@ export function registerLine(
     drawFn: drawFn,
     drawControlPointsFn: drawControlPointsFn,
     controlPointsFn: controlPointsFn,
-    dockControlPointFn: dockControlPointFn,
+    dockControlPointFn,
     pointIn: pointInFn,
+    getLength,
+    getCenter,
+    getPointByPos
   };
   return true;
 }

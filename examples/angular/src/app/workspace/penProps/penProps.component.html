@@ -842,11 +842,11 @@
       <div>
         <div class="flex grid">
           <div class="mr5">
-            <input name="fontFamily" class="input full" [(ngModel)]="pen.font.fontFamily" [readonly]="readonly"
+            <input name="fontFamily" class="input full" [(ngModel)]="pen.fontFamily" [readonly]="readonly"
               (change)="onChangeProp()" />
           </div>
           <div>
-            <input type="number" name="fontSize" class="input" [(ngModel)]="pen.font.fontSize" uiMin="0" uiMax="500"
+            <input type="number" name="fontSize" class="input" [(ngModel)]="pen.fontSize" uiMin="0" uiMax="500"
               [readonly]="readonly" (change)="onChangeProp()" />
           </div>
         </div>
@@ -859,18 +859,18 @@
       <div class="flex grid">
         <div class="mr5">
           <div class="input color " [class.readonly]="readonly">
-            <i [(colorPicker)]="pen.font.color" [style.background]="pen.font.color" cpPosition="bottom"
+            <i [(colorPicker)]="pen.fontColor" [style.background]="pen.fontColor" cpPosition="bottom"
               cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"
               (colorPickerChange)="onChangeProp()"></i>
-            <input name="fontColor" [(ngModel)]="pen.font.color" [readonly]="readonly" (change)="onChangeProp()" />
+            <input name="fontColor" [(ngModel)]="pen.fontColor" [readonly]="readonly" (change)="onChangeProp()" />
           </div>
         </div>
         <div>
           <div class="input color right" [class.readonly]="readonly">
-            <i [(colorPicker)]="pen.font.background" [style.background]="pen.font.background" cpPosition="bottom"
+            <i [(colorPicker)]="pen.textBackground" [style.background]="pen.textBackground" cpPosition="bottom"
               cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"
               (colorPickerChange)="onChangeProp()"></i>
-            <input name="fontColor" [(ngModel)]="pen.font.background" [readonly]="readonly" (change)="onChangeProp()" />
+            <input name="fontColor" [(ngModel)]="pen.textBackground" [readonly]="readonly" (change)="onChangeProp()" />
           </div>
         </div>
       </div>
@@ -880,11 +880,11 @@
       </div>
       <div class="flex grid">
         <div class="mr5">
-          <ui-select name="fontStyle" [(ngModel)]="pen.font.fontStyle" [options]="fontStyleOptions" [multi]="false"
+          <ui-select name="fontStyle" [(ngModel)]="pen.fontStyle" [options]="fontStyleOptions" [multi]="false"
             (change)="onChangeProp()" placeholder="正常" [readonly]="readonly"></ui-select>
         </div>
         <div>
-          <ui-select name="fontWeight" [(ngModel)]="pen.font.fontWeight" [options]="fontWeightOptions" [multi]="false"
+          <ui-select name="fontWeight" [(ngModel)]="pen.fontWeight" [options]="fontWeightOptions" [multi]="false"
             (change)="onChangeProp()" placeholder="正常" [readonly]="readonly"></ui-select>
         </div>
       </div>
@@ -895,11 +895,11 @@
       </div>
       <div class="flex grid">
         <div class="mr5">
-          <ui-select name="textAlign" [(ngModel)]="pen.font.textAlign" [options]="textAlignOptions" [multi]="false"
+          <ui-select name="textAlign" [(ngModel)]="pen.textAlign" [options]="textAlignOptions" [multi]="false"
             (change)="onChangeProp()" [readonly]="readonly"></ui-select>
         </div>
         <div>
-          <ui-select name="textBaseline" [(ngModel)]="pen.font.textBaseline" [options]="textBaselineOptions"
+          <ui-select name="textBaseline" [(ngModel)]="pen.textBaseline" [options]="textBaselineOptions"
             [multi]="false" (change)="onChangeProp()" [readonly]="readonly"></ui-select>
         </div>
       </div>
@@ -910,7 +910,7 @@
       </div>
       <div class="flex grid">
         <div class="mr5">
-          <input type="number" name="lineHeight" class="input" [(ngModel)]="pen.font.lineHeight" uiMin="1" uiMax="5"
+          <input type="number" name="lineHeight" class="input" [(ngModel)]="pen.lineHeight" uiMin="1" uiMax="5"
             [readonly]="readonly" (change)="onChangeProp()" />
         </div>
         <div>
@@ -1406,11 +1406,11 @@
                     <div>
                       <div class="flex grid">
                         <div class="mr5">
-                          <input class="input full" [(ngModel)]="item.state.font.fontFamily" [readonly]="readonly"
+                          <input class="input full" [(ngModel)]="item.state.fontFamily" [readonly]="readonly"
                             (change)="onAnimate()" />
                         </div>
                         <div>
-                          <input type="number" class="input" [(ngModel)]="item.state.font.fontSize" uiMin="0"
+                          <input type="number" class="input" [(ngModel)]="item.state.fontSize" uiMin="0"
                             uiMax="500" [readonly]="readonly" (change)="onAnimate()" />
                         </div>
                       </div>
@@ -1423,19 +1423,19 @@
                     <div class="flex grid">
                       <div class="mr5">
                         <div class="input color right" [class.readonly]="readonly">
-                          <i [(colorPicker)]="item.state.font.color" [style.background]="item.state.font.color"
+                          <i [(colorPicker)]="item.state.fontColor" [style.background]="item.state.fontColor"
                             cpPosition="bottom" cpAlphaChannel="always" cpOutputFormat="hex"
                             [cpPresetColors]="cpPresetColors" (colorPickerChange)="onAnimate()"></i>
-                          <input [(ngModel)]="item.state.font.color" [readonly]="readonly" (change)="onAnimate()" />
+                          <input [(ngModel)]="item.state.fontColor" [readonly]="readonly" (change)="onAnimate()" />
                         </div>
                       </div>
                       <div>
                         <div class="input color" [class.readonly]="readonly">
-                          <i [(colorPicker)]="item.state.font.background"
-                            [style.background]="item.state.font.background" cpPosition="bottom" cpAlphaChannel="always"
+                          <i [(colorPicker)]="item.state.textBackground"
+                            [style.background]="item.state.textBackground" cpPosition="bottom" cpAlphaChannel="always"
                             cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"
                             (colorPickerChange)="onAnimate()"></i>
-                          <input [(ngModel)]="item.state.font.background" [readonly]="readonly"
+                          <input [(ngModel)]="item.state.textBackground" [readonly]="readonly"
                             (change)="onAnimate()" />
                         </div>
                       </div>
@@ -1446,11 +1446,11 @@
                     </div>
                     <div class="flex grid">
                       <div class="mr5">
-                        <ui-select [(ngModel)]="item.state.font.fontStyle" [options]="fontStyleOptions" [multi]="false"
+                        <ui-select [(ngModel)]="item.state.fontStyle" [options]="fontStyleOptions" [multi]="false"
                           (change)="onAnimate()" placeholder="正常" [readonly]="readonly"></ui-select>
                       </div>
                       <div>
-                        <ui-select [(ngModel)]="item.state.font.fontWeight" [options]="fontWeightOptions"
+                        <ui-select [(ngModel)]="item.state.fontWeight" [options]="fontWeightOptions"
                           [multi]="false" (change)="onAnimate()" placeholder="正常" [readonly]="readonly"></ui-select>
                       </div>
                     </div>
@@ -1461,11 +1461,11 @@
                     </div>
                     <div class="flex grid">
                       <div class="mr5">
-                        <ui-select [(ngModel)]="item.state.font.textAlign" [options]="textAlignOptions" [multi]="false"
+                        <ui-select [(ngModel)]="item.state.textAlign" [options]="textAlignOptions" [multi]="false"
                           (change)="onAnimate()" [readonly]="readonly"></ui-select>
                       </div>
                       <div>
-                        <ui-select [(ngModel)]="item.state.font.textBaseline" [options]="textBaselineOptions"
+                        <ui-select [(ngModel)]="item.state.textBaseline" [options]="textBaselineOptions"
                           [multi]="false" (change)="onAnimate()" [readonly]="readonly"></ui-select>
                       </div>
                     </div>

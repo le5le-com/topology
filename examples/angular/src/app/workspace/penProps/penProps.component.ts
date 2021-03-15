@@ -350,12 +350,8 @@ export class PenPropsComponent implements OnInit, OnChanges {
         this.data = this.pen.data + '';
       }
     } else {
-      this.pen = {};
-    }
-
-    if (!this.pen.font) {
-      this.pen.font = {
-        color: '#222',
+      this.pen = {
+        fontColor: '#222',
         fontFamily: '"Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial',
         fontSize: 12,
         lineHeight: 1.5,
@@ -364,12 +360,6 @@ export class PenPropsComponent implements OnInit, OnChanges {
         textAlign: 'center',
         textBaseline: 'middle'
       };
-    }
-    if (!this.pen.font.fontStyle) {
-      this.pen.font.fontStyle = 'normal';
-    }
-    if (!this.pen.font.fontWeight) {
-      this.pen.font.fontWeight = 'normal';
     }
 
     if (this.pen.icon) {
@@ -435,7 +425,15 @@ export class PenPropsComponent implements OnInit, OnChanges {
         item.strokeStyle = this.pen.strokeStyle;
         item.lineWidth = this.pen.lineWidth;
         item.globalAlpha = this.pen.globalAlpha;
-        item.font = Object.assign({}, this.pen.font);
+        item.fontColor = this.pen.fontColor;
+        item.fontFamily = this.pen.fontFamily;
+        item.fontSize = this.pen.fontSize;
+        item.lineHeight = this.pen.lineHeight;
+        item.fontStyle = this.pen.fontStyle;
+        item.fontWeight = this.pen.fontWeight;
+        item.textAlign = this.pen.textAlign;
+        item.textBaseline = this.pen.textBaseline;
+        item.textBackground = this.pen.textBackground;
         item.textMaxLine = this.pen.textMaxLine;
         item.textOffsetX = this.pen.textOffsetX;
         item.textOffsetY = this.pen.textOffsetY;

@@ -1,4 +1,3 @@
-import { TopologyData } from './models/data';
 import { Rect } from './models/rect';
 import { Point } from './models/point';
 import { Line } from './models/line';
@@ -9,10 +8,9 @@ import { Options } from './options';
 import { Lock } from './models/status';
 import { Layer } from './layer';
 import { rgba } from './utils/math';
+import { find } from './utils';
 
 export class HoverLayer extends Layer {
-  protected data: TopologyData;
-
   line: Line;
   // for move line.
   initLine: Line;
@@ -31,7 +29,6 @@ export class HoverLayer extends Layer {
   dragRect: Rect;
   constructor(public options: Options = {}, TID: string) {
     super(TID);
-    this.data = Store.get(this.generateStoreKey('topology-data'));
     Store.set(this.generateStoreKey('LT:HoverLayer'), this);
   }
 
@@ -55,22 +52,6 @@ export class HoverLayer extends Layer {
     this.line.setFrom(from, this.line.fromArrow);
     if (this.line.from.id || this.line.to.id) {
       this.line.calcControlPoints();
-    }
-    Store.set(this.generateStoreKey('pts-') + this.line.id, null);
-    Store.set(this.generateStoreKey('LT:updateLines'), [this.line]);
-  }
-
-  lineMove(pt: { x: number; y: number }, initPos: { x: number; y: number }) {
-    if (this.line.locked) {
-      return;
-    }
-    const x = pt.x - initPos.x;
-    const y = pt.y - initPos.y;
-    this.line.setTo(new Point(this.initLine.to.x + x, this.initLine.to.y + y), this.line.toArrow);
-    this.line.setFrom(new Point(this.initLine.from.x + x, this.initLine.from.y + y), this.line.fromArrow);
-    for (let i = 0; i < this.initLine.controlPoints.length; ++i) {
-      this.line.controlPoints[i].x = this.initLine.controlPoints[i].x + x;
-      this.line.controlPoints[i].y = this.initLine.controlPoints[i].y + y;
     }
     Store.set(this.generateStoreKey('pts-') + this.line.id, null);
     Store.set(this.generateStoreKey('LT:updateLines'), [this.line]);

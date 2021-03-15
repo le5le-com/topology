@@ -17,7 +17,6 @@ registerChart();
 (window as any).Le5leTopology = {
   Topology,
   registerNode,
-  TopologyData,
   Pen,
   Node,
   Point,

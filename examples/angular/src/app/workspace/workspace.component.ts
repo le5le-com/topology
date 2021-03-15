@@ -25,7 +25,7 @@ export class WorkspaceComponent implements OnInit, OnDestroy {
   @ViewChild('workspace', { static: true }) workspace: ElementRef;
   tools: any[] = [];
   canvas: Topology;
-  canvasOptions: Options = {};
+  canvasOptions: Options = {translateKey:4}; // 开启右键拖动画布
   selection: {
     pen?: Pen;
     pens?: Pen[];
@@ -42,7 +42,7 @@ export class WorkspaceComponent implements OnInit, OnDestroy {
     component: false,
     shared: false,
   };
-  icons: { icon: string; iconFamily: string }[] = [];
+  icons: { icon: string; iconFamily: string; }[] = [];
 
   user: any;
   subUser: any;
@@ -65,7 +65,7 @@ export class WorkspaceComponent implements OnInit, OnDestroy {
     private router: Router,
     private activateRoute: ActivatedRoute,
     private http: HttpClient
-  ) {}
+  ) { }
 
   ngOnInit() {
     window.scrollTo(0, 0);
@@ -105,10 +105,11 @@ export class WorkspaceComponent implements OnInit, OnDestroy {
     this.service.canvasRegister();
   }
 
-  onMenu(event: { name: string; data: any }) {
+  onMenu(event: { name: string; data: any; }) {
     if (!this.canvas) {
       return;
     }
+
     switch (event.name) {
       case 'new':
         this.onNew();
@@ -245,7 +246,7 @@ export class WorkspaceComponent implements OnInit, OnDestroy {
     }
   }
 
-  onEditTool(tool: { id?: string; name: string }) {
+  onEditTool(tool: { id?: string; name: string; }) {
     if (tool.id) {
       this.router.navigateByUrl(`/workspace?id=${tool.id}`);
       return;
@@ -285,7 +286,7 @@ export class WorkspaceComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl('/workspace');
   }
 
-  async onOpen(data: { id: string; version?: string }) {
+  async onOpen(data: { id: string; version?: string; }) {
     const ret = await this.service.Get(data);
     if (!ret) {
       this.router.navigateByUrl('/workspace');
@@ -338,24 +339,12 @@ export class WorkspaceComponent implements OnInit, OnDestroy {
       const text = e.target.result + '';
       try {
         const data = JSON.parse(text);
-        if (data && data.lineName) {
-          Store.set('lineName', data.lineName);
-          Store.set('fromArrow', data.fromArrow);
-          Store.set('toArrow', data.toArrow);
-          this.data = {
-            id: '',
-            version: '',
-            data,
-            name: name,
-            desc: '',
-            image: '',
-            userId: '',
-            class: '',
-            component: false,
-            shared: false,
-          };
-          this.canvas.open(data);
-        }
+        Store.set('lineName', data.lineName);
+        Store.set('fromArrow', data.fromArrow);
+        Store.set('toArrow', data.toArrow);
+        data.name = name;
+        this.data = data;
+        this.canvas.open(data);
       } catch (e) {
         return false;
       }
@@ -463,7 +452,7 @@ export class WorkspaceComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSavePng(options?: { type?: string; quality?: any; ext?: string }) {
+  onSavePng(options?: { type?: string; quality?: any; ext?: string; }) {
     if (!options) {
       options = {};
     }
@@ -544,7 +533,7 @@ export class WorkspaceComponent implements OnInit, OnDestroy {
         Store.set('locked', data);
         break;
     }
-    console.log('onMessage:', event, data);
+    // console.log('onMessage:', event, data);
   };
 
   onSignup() {

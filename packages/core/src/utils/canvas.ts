@@ -36,20 +36,9 @@ export function find(idOrTag: string, pens: Pen[]) {
     }
 
     if ((item as any).children) {
-      const children: any = find(idOrTag, (item as any).children);
-      if (children && children.length > 1) {
-        result.push.apply(result, children);
-      } else if (children) {
-        result.push(children);
-      }
+      result.push(...find(idOrTag, (item as any).children));
     }
   });
-
-  if (result.length === 0) {
-    return;
-  } else if (result.length === 1) {
-    return result[0];
-  }
 
   return result;
 }
@@ -99,7 +88,7 @@ export function getParent(pens: Pen[], child: Pen): Node {
   return parent;
 }
 
-export function pointInRect(point: { x: number; y: number }, vertices: Point[]): boolean {
+export function pointInRect(point: { x: number; y: number; }, vertices: Point[]): boolean {
   if (vertices.length < 3) {
     return false;
   }

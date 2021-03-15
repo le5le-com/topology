@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --open --port=3020",
+    "start": "ng serve --open --host=0.0.0.0 --port=3020",
     "le5le": "ng serve --open --host=local.le5le.com --port=3020",
     "build": "ng build --prod"
   },

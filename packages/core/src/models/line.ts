@@ -11,30 +11,27 @@ import { abs } from '../utils/math';
 export class Line extends Pen {
   from: Point;
   to: Point;
-  controlPoints: Point[] = [];
+  controlPoints: Point[];
   fromArrow: string;
   toArrow: string;
-  fromArrowSize = 5;
-  toArrowSize = 5;
+  fromArrowSize: number;
+  toArrowSize: number;
   fromArrowColor: string;
   toArrowColor: string;
 
   length: number;
 
-  borderWidth = 0;
-  borderColor = '#000000';
+  borderWidth: number;
+  borderColor: string;
 
-  animateColor = '';
-  animateSpan = 1;
-
+  animateColor: string;
+  animateSpan: number;
   animateLineDash: number[];
-
-  isAnimate = false;
-  animateFromSize = 0;
-  animateToSize = 0;
-
-  animateDot: { x: number; y: number };
-  animateDotSize = 3;
+  isAnimate: boolean;
+  animateFromSize: number;
+  animateToSize: number;
+  animateDot: { x: number; y: number; };
+  animateDotSize: number;
 
   lineJoin: CanvasLineJoin;
 
@@ -42,66 +39,40 @@ export class Line extends Pen {
   disableEmptyLine: boolean;
 
   constructor(json?: any) {
-    super(json);
+    super();
 
+    const defaultData: any = {
+      name: 'curve',
+      fromArrow: '',
+      toArrow: '',
+      controlPoints: [],
+      fromArrowSize: 5,
+      toArrowSize: 5,
+      borderWidth: 0,
+      borderColor: '#000000',
+      animateColor: '',
+      animateSpan: 1,
+      animateFromSize: 0,
+      animateToSize: 0,
+      animateDotSize: 3,
+      textBackground: '#ffffff'
+    };
+
+    this.fromData(defaultData, json);
     this.type = PenType.Line;
-    if (json) {
-      if (json.from) {
-        this.from = new Point(
-          json.from.x,
-          json.from.y,
-          json.from.direction,
-          json.from.anchorIndex,
-          json.from.id,
-          json.autoAnchor
-        );
-      }
-      if (json.to) {
-        this.to = new Point(json.to.x, json.to.y, json.to.direction, json.to.anchorIndex, json.to.id, json.autoAnchor);
-      }
-
-      this.fromArrow = json.fromArrow || '';
-      this.toArrow = json.toArrow || '';
-      this.fromArrowSize = json.fromArrowSize || 5;
-      this.toArrowSize = json.toArrowSize || 5;
-      this.fromArrowColor = json.fromArrowColor;
-      this.toArrowColor = json.toArrowColor;
-      if (json.animateColor) {
-        this.animateColor = json.animateColor;
-      }
-      if (json.animateSpan) {
-        this.animateSpan = json.animateSpan;
-      }
-      if (json.animateLineDash) {
-        this.animateLineDash = json.animateLineDash;
-      }
-      if (json.animatePlay) {
-        this.animatePlay = json.animatePlay;
-      }
-      if (json.animateStart) {
-        this.animateStart = json.animateStart;
-      }
-      if (json.length) {
-        this.length = json.length;
-      }
-      if (json.borderWidth) {
-        this.borderColor = json.borderColor;
-        this.borderWidth = json.borderWidth;
-      }
-      this.animateDotSize = json.animateDotSize || 3;
-      this.manualCps = json.manualCps;
-      this.disableEmptyLine = json.disableEmptyLine;
-
-      if (json.lineJoin) {
-        this.lineJoin = json.lineJoin;
-      }
-    } else {
-      this.name = 'curve';
-      this.fromArrow = 'triangleSolid';
+    if (json.from) {
+      this.from = new Point(
+        json.from.x,
+        json.from.y,
+        json.from.direction,
+        json.from.anchorIndex,
+        json.from.id,
+        json.autoAnchor
+      );
     }
 
-    if (!this.font.background) {
-      this.font.background = '#fff';
+    if (json.to) {
+      this.to = new Point(json.to.x, json.to.y, json.to.direction, json.to.anchorIndex, json.to.id, json.autoAnchor);
     }
 
     // 暂时兼容老数据
@@ -109,12 +80,20 @@ export class Line extends Pen {
       json.controlPoints = null;
       this.calcControlPoints();
     }
-    //
+    // end
 
     if (json.controlPoints) {
+      this.controlPoints = [];
       for (const item of json.controlPoints) {
         this.controlPoints.push(new Point(item.x, item.y, item.direction, item.anchorIndex, item.id));
       }
+    }
+
+    if (json.children) {
+      this.children = [];
+      json.children.forEach((item: Pen) => {
+        this.children.push(new Line(item));
+      });
     }
   }
 
@@ -243,7 +222,7 @@ export class Line extends Pen {
     }
   }
 
-  pointIn(pt: { x: number; y: number }) {
+  pointIn(pt: { x: number; y: number; }) {
     return drawLineFns[this.name].pointIn(pt, this);
   }
 
@@ -267,6 +246,10 @@ export class Line extends Pen {
 
       case 'curve':
         return curveLen(this.from, this.controlPoints[0], this.controlPoints[1], this.to);
+      default:
+        if (drawLineFns[this.name].getLength) {
+          return drawLineFns[this.name].getLength(this);
+        }
     }
 
     return 0;
@@ -279,8 +262,8 @@ export class Line extends Pen {
       width = 100;
     }
     const height =
-      this.font.lineHeight *
-      this.font.fontSize *
+      this.lineHeight *
+      this.fontSize *
       (this.textMaxLine || (this.text && this.text.split('\n').length) || 1);
     this.textRect = new Rect(center.x - width / 2, center.y - height / 2, width, height);
   }
@@ -303,6 +286,11 @@ export class Line extends Pen {
         break;
       case 'curve':
         center = getBezierPoint(0.5, this.to, this.controlPoints[1], this.controlPoints[0], this.from);
+        break;
+      default:
+        if (drawLineFns[this.name].getCenter) {
+          center = drawLineFns[this.name].getCenter(this);
+        }
     }
 
     return center;
@@ -338,6 +326,10 @@ export class Line extends Pen {
         }
       case 'curve':
         return getBezierPoint(pos / this.getLen(), this.from, this.controlPoints[0], this.controlPoints[1], this.to);
+      default:
+        if (drawLineFns[this.name].getPointByPos) {
+          return drawLineFns[this.name].getPointByPos(pos, this);
+        }
     }
     return null;
   }
@@ -472,37 +464,55 @@ export class Line extends Pen {
   }
 
   translate(x: number, y: number) {
-    this.from.x += x;
-    this.from.y += y;
-    this.to.x += x;
-    this.to.y += y;
-    if (this.text) {
-      this.textRect = null;
+    if (this.from) {
+      this.from.x += x;
+      this.from.y += y;
+      this.to.x += x;
+      this.to.y += y;
+      if (this.text) {
+        this.textRect = null;
+      }
+
+      for (const pt of this.controlPoints) {
+        pt.x += x;
+        pt.y += y;
+      }
     }
 
-    for (const pt of this.controlPoints) {
-      pt.x += x;
-      pt.y += y;
+    if (this.children) {
+      for (const item of this.children) {
+        item.translate(x, y);
+      }
     }
 
     Store.set(this.generateStoreKey('pts-') + this.id, null);
   }
 
-  scale(scale: number, center: { x: number; y: number }) {
-    this.from.x = center.x - (center.x - this.from.x) * scale;
-    this.from.y = center.y - (center.y - this.from.y) * scale;
-    this.to.x = center.x - (center.x - this.to.x) * scale;
-    this.to.y = center.y - (center.y - this.to.y) * scale;
-    this.lineWidth *= scale;
-    this.borderWidth *= scale;
-    this.font.fontSize *= scale;
-    if (this.text) {
-      this.textRect = null;
+  scale(scale: number, center: { x: number; y: number; }) {
+    if (this.from) {
+      this.from.x = center.x - (center.x - this.from.x) * scale;
+      this.from.y = center.y - (center.y - this.from.y) * scale;
+      this.to.x = center.x - (center.x - this.to.x) * scale;
+      this.to.y = center.y - (center.y - this.to.y) * scale;
+      this.lineWidth *= scale;
+      this.borderWidth *= scale;
+      this.fontSize *= scale;
+      if (this.text) {
+        this.textRect = null;
+      }
+      this.textOffsetX *= scale;
+      this.textOffsetY *= scale;
+
+      for (const pt of this.controlPoints) {
+        pt.x = center.x - (center.x - pt.x) * scale;
+        pt.y = center.y - (center.y - pt.y) * scale;
+      }
     }
 
-    for (const pt of this.controlPoints) {
-      pt.x = center.x - (center.x - pt.x) * scale;
-      pt.y = center.y - (center.y - pt.y) * scale;
+    if (this.children) {
+      for (const item of this.children) {
+        item.scale(scale, center);
+      }
     }
 
     Store.set(this.generateStoreKey('pts-') + this.id, null);

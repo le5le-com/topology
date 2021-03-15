@@ -31,21 +31,15 @@ export class AnimateLayer extends Layer {
     });
     this.subscribePlay = Store.subscribe(
       this.generateStoreKey('LT:AnimatePlay'),
-      (params: { stop?: boolean; tag?: string; pen?: Pen }) => {
+      (params: { stop?: boolean; tag?: string; pen?: Pen; }) => {
         if (params.stop) {
           if (params.tag) {
-            const pen = find(params.tag, this.data.pens);
-            if (pen && (pen as any).id) {
-              if (this.pens.has((pen as any).id)) {
-                this.pens.get((pen as any).id).animateStart = 0;
+            const pens = find(params.tag, this.data.pens);
+            pens.forEach((item) => {
+              if (this.pens.has(item.id)) {
+                this.pens.get(item.id).animateStart = 0;
               }
-            } else if (pen) {
-              (pen as Pen[]).forEach((item) => {
-                if (this.pens.has(item.id)) {
-                  this.pens.get(item.id).animateStart = 0;
-                }
-              });
-            }
+            });
           }
 
           if (params.pen && this.pens.has(params.pen.id)) {
@@ -53,6 +47,7 @@ export class AnimateLayer extends Layer {
           }
         } else {
           if (params.pen) {
+
             if (this.pens.has(params.pen.id)) {
               this.pens.get(params.pen.id).animateStart = Date.now();
             } else {

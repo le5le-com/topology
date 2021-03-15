@@ -22,8 +22,10 @@ export function diamondSolid(ctx: CanvasRenderingContext2D, from: Point, to: Poi
   ctx.stroke();
   if (fillStyle) {
     ctx.fillStyle = fillStyle;
-    ctx.fill();
+  } else {
+    ctx.fillStyle = ctx.strokeStyle;
   }
+  ctx.fill();
 }
 
 export function diamond(ctx: CanvasRenderingContext2D, from: Point, to: Point, size: number) {

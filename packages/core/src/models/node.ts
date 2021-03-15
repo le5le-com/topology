@@ -1,7 +1,7 @@
 import { Pen, PenType } from './pen';
+import { Line } from './line';
 import { Rect } from './rect';
 import { Point } from './point';
-import { Line } from './line';
 import { anchorsFns, iconRectFns, textRectFns, drawNodeFns } from '../middles';
 import { defaultAnchors } from '../middles/default.anchor';
 import { defaultIconRect, defaultTextRect } from '../middles/default.rect';
@@ -12,15 +12,14 @@ import { s8 } from '../utils/uuid';
 import { pointInRect } from '../utils/canvas';
 
 export const images: {
-  [key: string]: { img: HTMLImageElement; cnt: number };
+  [key: string]: { img: HTMLImageElement; };
 } = {};
 
 export class Node extends Pen {
-  is3D = false;
+  is3D: boolean;
   z: number;
-  zRotate = 0;
+  zRotate: number;
 
-  // 0 -1 之间的小数
   borderRadius: number;
 
   // icon
@@ -28,6 +27,7 @@ export class Node extends Pen {
   iconFamily: string;
   iconSize: number;
   iconColor: string;
+  iconRotate: number;
 
   image: string;
   lastImage: string;
@@ -51,16 +51,16 @@ export class Node extends Pen {
   paddingLeft: number | string;
   paddingRight: number | string;
 
-  onlySizeX?: boolean;
-  onlySizeY?: boolean;
+  disableSizeX?: boolean;
+  disableSizeY?: boolean;
 
   iconRect: Rect;
   fullIconRect: Rect;
 
+  points: Point[] = [];
+
   anchors: Point[] = [];
   rotatedAnchors: Point[] = [];
-
-  children: Pen[];
 
   // nodes移动时，停靠点的参考位置
   dockWatchers: Point[];
@@ -84,7 +84,7 @@ export class Node extends Pen {
   video: string;
   audio: string;
   // 0 - 人工播放；1 - auto自动播放；2 - animate play
-  play: number;
+  playType: number;
   playLoop: boolean;
   nextPlay: string;
 
@@ -96,50 +96,28 @@ export class Node extends Pen {
   // 外部dom是否已经渲染。当需要重绘时，设置为false（用于第三方库辅助变量）
   elementRendered: boolean;
 
-  constructor(json: any, noChild = false) {
-    super(json);
+  constructor(json: any) {
+    super();
 
+    const defaultData: any = {
+      zRotate: 0,
+      borderRadius: 0,
+      imageAlign: 'center',
+      gradientAngle: 0,
+      gradientRadius: 0.01,
+      paddingTop: 0,
+      paddingBottom: 0,
+      paddingLeft: 0,
+      paddingRight: 0,
+      animateFrame: 0,
+      children: []
+    };
+
+    this.fromData(defaultData, json);
     this.type = PenType.Node;
-    this.is3D = json.is3D;
-    this.z = json.z;
-    this.zRotate = json.zRotate || 0;
-
-    this.borderRadius = +json.borderRadius || 0;
-
-    this.icon = json.icon;
-    this.iconFamily = json.iconFamily;
-    this.iconSize = +json.iconSize;
-    this.iconColor = json.iconColor;
-
-    this.image = json.image;
-    if (json.imgNaturalWidth) {
-      this.imgNaturalWidth = json.imgNaturalWidth;
+    if (this.gif) {
+      this.elementLoaded = false;
     }
-    if (json.imgNaturalHeight) {
-      this.imgNaturalHeight = json.imgNaturalHeight;
-    }
-    if (json.imageWidth) {
-      this.imageWidth = json.imageWidth;
-    }
-    if (json.imageHeight) {
-      this.imageHeight = json.imageHeight;
-    }
-    this.imageRatio = json.imageRatio;
-    this.imageAlign = json.imageAlign || 'center';
-
-    this.bkType = json.bkType;
-    this.gradientFromColor = json.gradientFromColor;
-    this.gradientToColor = json.gradientToColor;
-    this.gradientAngle = json.gradientAngle || 0;
-    this.gradientRadius = json.gradientRadius || 0.01;
-
-    this.paddingTop = json.paddingTop || 0;
-    this.paddingBottom = json.paddingBottom || 0;
-    this.paddingLeft = json.paddingLeft || 0;
-    this.paddingRight = json.paddingRight || 0;
-
-    this.onlySizeX = json.onlySizeX;
-    this.onlySizeY = json.onlySizeY;
 
     // 兼容老数据
     if (json.children && json.children[0] && json.children[0].parentRect) {
@@ -168,45 +146,66 @@ export class Node extends Pen {
     }
     // 兼容老数据 end
 
-    if (json.animateFrames) {
-      this.animateFrames = json.animateFrames;
-      for (const item of this.animateFrames) {
-        if (!item.state.init) {
-          item.state = new Node(item.state, true);
-        }
+    if (json.points) {
+      this.points = [];
+      json.points.forEach((pt: any) => {
+        this.points.push(new Point(pt.x, pt.y));
+      });
+    }
+
+    if (json.animateFrames && json.animateFrames.length) {
+      for (const item of json.animateFrames) {
+        item.children = null;
+        item.state = new Node(item.state);
       }
+      this.animateFrames = json.animateFrames;
     }
-    if (json.animateDuration) {
-      this.animateDuration = json.animateDuration;
-    }
-    this.animateFrame = json.animateFrame || 0;
     this.animateType = json.animateType ? json.animateType : json.animateDuration ? 'custom' : '';
-    this.animateAlone = json.animateAlone;
-
-    this.iframe = json.iframe;
-    this.elementId = json.elementId;
-    this.audio = json.audio;
-    this.video = json.video;
-    this.play = json.play;
-    this.nextPlay = json.nextPlay;
-
-    // if (json.elementLoaded !== undefined) {
-    //   this.elementId = null;
-    //   this.elementLoaded = false;
-    // }
-
     this.init();
 
-    if (!noChild) {
-      this.setChild(json.children);
-    } else {
-      this.children = null;
+    if (json.children) {
+      this.children = [];
+      json.children.forEach((item: Pen) => {
+        let child: Pen;
+        switch (item.type) {
+          case PenType.Line:
+            child = new Line(item);
+            child.calcRectByParent(this);
+            break;
+          default:
+            child = new Node(item);
+            child.parentId = this.id;
+            child.calcRectByParent(this);
+            (child as Node).init();
+            break;
+        }
+        this.children.push(child);
+      });
     }
   }
 
-  static cloneState(json: any) {
+  static cloneState(json: any, addFrame = true) {
     const n = new Node(json);
     delete n.animateFrames;
+
+    if (addFrame) {
+      delete n.text;
+      delete n.fontColor;
+      delete n.fontFamily;
+      delete n.fontSize;
+      delete n.lineHeight;
+      delete n.fontStyle;
+      delete n.fontWeight;
+      delete n.textAlign;
+      delete n.textBaseline;
+      delete n.textBackground;
+
+      delete n.iconFamily;
+      delete n.icon;
+      delete n.iconSize;
+      delete n.iconColor;
+    }
+
     return n;
   }
 
@@ -250,7 +249,7 @@ export class Node extends Pen {
   }
 
   addToDiv() {
-    if (this.audio || this.video || this.iframe || this.elementId || this.hasGif()) {
+    if (this.audio || this.video || this.iframe || this.elementId || this.gif) {
       Store.set(this.generateStoreKey('LT:addDiv'), this);
     }
   }
@@ -262,7 +261,7 @@ export class Node extends Pen {
 
     if (this.children) {
       for (const item of this.children) {
-        if (item.type === PenType.Node && (item as Node).hasGif()) {
+        if (item.type === PenType.Node && (item as any).hasGif && (item as Node).hasGif()) {
           return true;
         }
       }
@@ -276,50 +275,6 @@ export class Node extends Pen {
     this.paddingRightNum = abs(this.rect.width, this.paddingRight);
     this.paddingTopNum = abs(this.rect.height, this.paddingTop);
     this.paddingBottomNum = abs(this.rect.height, this.paddingBottom);
-  }
-
-  setChild(children: any[]) {
-    if (!children) {
-      return;
-    }
-
-    this.children = [];
-    for (const item of children) {
-      let child: Pen;
-      switch (item.type) {
-        case PenType.Line:
-          child = new Line(item);
-          child.calcRectByParent(this);
-          break;
-        default:
-          child = new Node(item);
-          child.parentId = this.id;
-          child.calcRectByParent(this);
-          (child as Node).init();
-          (child as Node).setChild(item.children);
-          break;
-      }
-      this.children.push(child);
-    }
-  }
-
-  setTID(id: string) {
-    this.TID = id;
-
-    if (!this.children) {
-      return;
-    }
-
-    for (const item of this.children) {
-      this.TID = id;
-      switch (item.type) {
-        case PenType.Node:
-          (item as Node).setTID(id);
-          break;
-      }
-    }
-
-    return this;
   }
 
   setChildrenIds() {
@@ -363,11 +318,7 @@ export class Node extends Pen {
     // Draw image.
     if (this.image) {
       this.drawImg(ctx);
-      return;
-    }
-
-    // Draw icon
-    if (this.icon) {
+    } else if (this.icon) {
       ctx.save();
       ctx.shadowColor = '';
       ctx.shadowBlur = 0;
@@ -432,78 +383,85 @@ export class Node extends Pen {
     }
 
     const gif = this.image.indexOf('.gif') > 0;
+    if (!gif) {
+      if (this.img) {
+        ctx.save();
+        ctx.shadowColor = '';
+        ctx.shadowBlur = 0;
 
-    if (!gif && this.img) {
-      ctx.save();
-      ctx.shadowColor = '';
-      ctx.shadowBlur = 0;
-
-      const rect = this.getIconRect();
-      let x = rect.x;
-      let y = rect.y;
-      let w = rect.width;
-      let h = rect.height;
-      if (this.imageWidth) {
-        w = this.imageWidth;
-      }
-      if (this.imageHeight) {
-        h = this.imageHeight;
-      }
-      if (this.imageRatio) {
+        const rect = this.getIconRect();
+        let x = rect.x;
+        let y = rect.y;
+        let w = rect.width;
+        let h = rect.height;
         if (this.imageWidth) {
-          h = (this.imgNaturalHeight / this.imgNaturalWidth) * w;
-        } else {
-          w = (this.imgNaturalWidth / this.imgNaturalHeight) * h;
+          w = this.imageWidth;
         }
-      }
-      if (this.name !== 'image') {
+        if (this.imageHeight) {
+          h = this.imageHeight;
+        }
+        if (this.imageRatio) {
+          if (this.imageWidth) {
+            h = (this.imgNaturalHeight / this.imgNaturalWidth) * w;
+          } else {
+            w = (this.imgNaturalWidth / this.imgNaturalHeight) * h;
+          }
+        }
         x += (rect.width - w) / 2;
         y += (rect.height - h) / 2;
-      }
-      switch (this.imageAlign) {
-        case 'top':
-          y = rect.y;
-          break;
-        case 'bottom':
-          y = rect.ey - h;
-          break;
-        case 'left':
-          x = rect.x;
-          break;
-        case 'right':
-          x = rect.ex - w;
-          break;
-        case 'left-top':
-          x = rect.x;
-          y = rect.y;
-          break;
-        case 'right-top':
-          x = rect.ex - w;
-          y = rect.y;
-          break;
-        case 'left-bottom':
-          x = rect.x;
-          y = rect.ey - h;
-          break;
-        case 'right-bottom':
-          x = rect.ex - w;
-          y = rect.ey - h;
-          break;
-      }
-      ctx.drawImage(this.img, x, y, w, h);
-      ctx.restore();
-      return;
-    }
 
-    // Load image and draw it.
-    if (!gif && images[this.image]) {
-      this.img = images[this.image].img;
-      ++images[this.image].cnt;
+        switch (this.imageAlign) {
+          case 'top':
+            y = rect.y;
+            break;
+          case 'bottom':
+            y = rect.ey - h;
+            break;
+          case 'left':
+            x = rect.x;
+            break;
+          case 'right':
+            x = rect.ex - w;
+            break;
+          case 'left-top':
+            x = rect.x;
+            y = rect.y;
+            break;
+          case 'right-top':
+            x = rect.ex - w;
+            y = rect.y;
+            break;
+          case 'left-bottom':
+            x = rect.x;
+            y = rect.ey - h;
+            break;
+          case 'right-bottom':
+            x = rect.ex - w;
+            y = rect.ey - h;
+            break;
+        }
 
-      this.lastImage = this.image;
-      this.imgNaturalWidth = this.img.naturalWidth;
-      this.imgNaturalHeight = this.img.naturalHeight;
-      this.drawImg(ctx);
+        if (this.iconRotate) {
+          ctx.translate(rect.center.x, rect.center.y);
+          ctx.rotate((this.iconRotate * Math.PI) / 180);
+          ctx.translate(-rect.center.x, -rect.center.y);
+        }
+        ctx.drawImage(this.img, x, y, w, h);
+        ctx.restore();
+        return;
+      } else if (images[this.image]) {
+        this.img = images[this.image].img;
+        this.lastImage = this.image;
+        this.imgNaturalWidth = this.img.naturalWidth;
+        this.imgNaturalHeight = this.img.naturalHeight;
+        this.drawImg(ctx);
+        return;
+      }
+    } else if (this.img) {
+      if (this.TID && !this.elementLoaded) {
+        this.elementLoaded = true;
+        Store.set(this.generateStoreKey('LT:addDiv'), this);
+      }
       return;
     }
 
@@ -517,12 +475,14 @@ export class Node extends Pen {
       this.img = img;
       images[this.image] = {
         img,
-        cnt: 1,
       };
       Store.set(this.generateStoreKey('LT:imageLoaded'), true);
       if (!this.gif && gif) {
         this.gif = true;
-        Store.set(this.generateStoreKey('LT:addDiv'), this);
+        if (this.TID) {
+          this.elementLoaded = true;
+          Store.set(this.generateStoreKey('LT:addDiv'), this);
+        }
       }
     };
   }
@@ -642,12 +602,11 @@ export class Node extends Pen {
       this.animateFrames[i].start = passed;
       passed += this.animateFrames[i].duration;
       this.animateFrames[i].end = passed;
-      this.animateFrames[i].initState = Node.cloneState(i ? this.animateFrames[i - 1].state : this);
+      this.animateFrames[i].initState = Node.cloneState(i ? this.animateFrames[i - 1].state : this, false);
     }
     this.animateDuration = passed;
 
-    this.animateReady = Node.cloneState(this);
-
+    this.animateReady = Node.cloneState(this, false);
     this.animatePos = 0;
     this.animateFrame = 0;
   }
@@ -714,12 +673,22 @@ export class Node extends Pen {
         this.dash = item.state.dash;
         this.strokeStyle = item.state.strokeStyle;
         this.fillStyle = item.state.fillStyle;
-        this.text = item.state.text;
-        this.font = item.state.font;
-        this.iconFamily = item.state.iconFamily;
-        this.icon = item.state.icon;
-        this.iconSize = item.state.iconSize;
-        this.iconColor = item.state.iconColor;
+
+        item.state.text && (this.text = item.state.text);
+        item.state.fontColor && (this.fontColor = item.state.fontColor);
+        item.state.fontFamily && (this.fontFamily = item.state.fontFamily);
+        item.state.fontSize && (this.fontSize = item.state.fontSize);
+        item.state.lineHeight && (this.lineHeight = item.state.lineHeight);
+        item.state.fontStyle && (this.fontStyle = item.state.fontStyle);
+        item.state.fontWeight && (this.fontWeight = item.state.fontWeight);
+        item.state.textAlign && (this.textAlign = item.state.textAlign);
+        item.state.textBaseline && (this.textBaseline = item.state.textBaseline);
+        item.state.textBackground && (this.textBackground = item.state.textBackground);
+        item.state.iconFamily && (this.iconFamily = item.state.iconFamily);
+        item.state.icon && (this.icon = item.state.icon);
+        item.state.iconSize && (this.iconSize = item.state.iconSize);
+        item.state.iconColor && (this.iconColor = item.state.iconColor);
+
         this.visible = item.state.visible;
 
         this._animateFrame = i + 1;
@@ -786,6 +755,32 @@ export class Node extends Pen {
           if (item.state.value !== item.initState.value) {
             this.value = (item.initState.value || 0) + ((item.state.value || 0) - (item.initState.value || 0)) * rate;
           }
+
+          if (item.state.num !== item.initState.num) {
+            this.num = (item.initState.num || 0) + ((item.state.num || 0) - (item.initState.num || 0)) * rate;
+          }
+
+          if (item.state.num1 !== item.initState.num1) {
+            this.num1 = (item.initState.num1 || 0) + ((item.state.num1 || 0) - (item.initState.num1 || 0)) * rate;
+          }
+
+          if (item.state.num2 !== item.initState.num2) {
+            this.num2 = (item.initState.num2 || 0) + ((item.state.num2 || 0) - (item.initState.num2 || 0)) * rate;
+          }
+
+          if (item.state.num3 !== item.initState.num3) {
+            this.num3 = (item.initState.num3 || 0) + ((item.state.num3 || 0) - (item.initState.num3 || 0)) * rate;
+          }
+
+          if (item.state.data) {
+            for (let key in item.state.data) {
+              if (typeof item.state.data[key] === 'number') {
+                this.data[key] = (item.initState.data[key] || 0) + ((item.state.data[key] || 0) - (item.initState.data[key] || 0)) * rate;
+              } else if (item.state.data[key] !== undefined && item.state.data[key] !== null) {
+                this.data[key] = item.state.data[key];
+              }
+            }
+          }
         } else {
           this.rect = item.state.rect;
           this.lineWidth = item.state.lineWidth;
@@ -804,12 +799,15 @@ export class Node extends Pen {
     }
   };
 
-  scale(scale: number, center?: { x: number; y: number }) {
+  scale(scale: number, center?: { x: number; y: number; }) {
     if (!center) {
       center = this.rect.center;
     }
+    this['oldRect'] = this.rect.clone();
     this.rect.x = center.x - (center.x - this.rect.x) * scale;
     this.rect.y = center.y - (center.y - this.rect.y) * scale;
+    this.textOffsetX *= scale;
+    this.textOffsetY *= scale;
     this.z *= scale;
     this.rect.width *= scale;
     this.rect.height *= scale;
@@ -822,7 +820,7 @@ export class Node extends Pen {
       this.imageHeight *= scale;
     }
     this.lastImage = null;
-    this.font.fontSize *= scale;
+    this.fontSize *= scale;
     this.iconSize *= scale;
     if (typeof this.paddingLeft === 'number') {
       this.paddingLeft *= scale;
@@ -881,10 +879,13 @@ export class Node extends Pen {
           item.state.scale(scale, center);
         }
 
-        // fix bug
-        item.state.font.fontSize = item.initState.font.fontSize;
+        if (item.initState && item.state) {
+          item.state.fontSize = item.initState.fontSize;
+        }
       }
     }
+
+    this.scalePoints(scale, scale);
 
     this.elementRendered = false;
     this.init();
@@ -895,8 +896,23 @@ export class Node extends Pen {
       }
     }
 
-    if (this.animateReady) {
+    if (this.animateReady && this.animateReady.scale) {
       this.animateReady.scale(scale, center);
+    }
+  }
+
+  scalePoints(scaleX?: number, scaleY?: number) {
+    if (this.points && this['oldRect']) {
+      if (!scaleX) {
+        scaleX = this.rect.width / this['oldRect'].width;
+      }
+      if (!scaleY) {
+        scaleY = this.rect.height / this['oldRect'].height;
+      }
+      this.points.forEach((pt: Point) => {
+        pt.x = this.rect.x + (pt.x - this['oldRect'].x) * scaleX;
+        pt.y = this.rect.y + (pt.y - this['oldRect'].y) * scaleY;
+      });
     }
   }
 
@@ -919,6 +935,13 @@ export class Node extends Pen {
       }
     }
 
+    if (this.points) {
+      this.points.forEach((pt: Point) => {
+        pt.x += x;
+        pt.y += y;
+      });
+    }
+
     this.init();
 
     if (this.children) {
@@ -927,7 +950,7 @@ export class Node extends Pen {
       }
     }
 
-    if (this.animateReady) {
+    if (this.animateReady && this.animateReady.translate) {
       this.animateReady.translate(x, y);
     }
   }
@@ -942,6 +965,31 @@ export class Node extends Pen {
         }
       }
     }
+  }
+
+  pushPoint(pt: Point) {
+    this.points.push(pt);
+    if (!this.rect) {
+      this.rect = new Rect(0, 0, 0, 0);
+    }
+
+    this.points.forEach((p: Point) => {
+      if (!this.rect.x || this.rect.x > p.x) {
+        this.rect.x = p.x;
+      }
+      if (!this.rect.y || this.rect.y > p.y) {
+        this.rect.y = p.y;
+      }
+      if (this.rect.ex < p.x) {
+        this.rect.ex = p.x;
+      }
+      if (this.rect.ey < p.y) {
+        this.rect.ey = p.y;
+      }
+    });
+
+    this.rect.width = this.rect.ex - this.rect.x;
+    this.rect.height = this.rect.ey - this.rect.y;
   }
 
   nearestAnchor(pt: Point) {
@@ -961,7 +1009,7 @@ export class Node extends Pen {
     };
   }
 
-  hitInSelf(point: { x: number; y: number }, padding = 0) {
+  hitInSelf(point: { x: number; y: number; }, padding = 0) {
     if (this.rotate % 360 === 0) {
       return this.rect.hit(point, padding);
     }
@@ -973,7 +1021,7 @@ export class Node extends Pen {
     return pointInRect(point, pts);
   }
 
-  hit(pt: { x: number; y: number }, padding = 0) {
+  hit(pt: { x: number; y: number; }, padding = 0) {
     let node: any;
     if (this.hitInSelf(pt, padding)) {
       node = this;
@@ -1006,6 +1054,11 @@ export class Node extends Pen {
   clone() {
     const n = new Node(this);
     n.setTID(this.TID);
+    n.elementRendered = false;
+    n.elementLoaded = false;
+    if (this.name !== 'div') {
+      n.elementId = '';
+    }
     this.setChildrenIds();
     return n;
   }

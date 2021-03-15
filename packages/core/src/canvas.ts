@@ -1,4 +1,4 @@
-import { Store } from 'le5le-store';
+import { Observer, Store } from 'le5le-store';
 
 import { TopologyData } from './models/data';
 import { Options } from './options';
@@ -11,9 +11,12 @@ export class Canvas extends Layer {
   canvas = document.createElement('canvas');
   width = 0;
   height = 0;
+  subcribe: Observer;
   constructor(public parentElem: HTMLElement, public options: Options = {}, TID: string) {
     super(TID);
-    this.data = Store.get(this.generateStoreKey('topology-data'));
+    this.subcribe = Store.subscribe(this.generateStoreKey('topology-data'), (val) => {
+      this.data = val;
+    });
     this.canvas.style.position = 'absolute';
     this.canvas.style.left = '0';
     this.canvas.style.top = '0';
@@ -35,7 +38,7 @@ export class Canvas extends Layer {
     }
   }
 
-  resize(size?: { width: number; height: number }) {
+  resize(size?: { width: number; height: number; }) {
     if (size) {
       this.width = size.width | 0;
       this.height = size.height | 0;
@@ -68,5 +71,9 @@ export class Canvas extends Layer {
 
   getDpiRatio() {
     return Canvas.dpiRatio;
+  }
+
+  destroy() {
+    this.subcribe.unsubscribe();
   }
 }

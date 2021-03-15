@@ -4,6 +4,7 @@ export enum KeyType {
   Ctrl,
   Shift,
   Alt,
+  Right,
 }
 
 export enum KeydownType {
@@ -28,22 +29,20 @@ export interface Options {
   dockFillStyle?: string;
   dragColor?: string;
   animateColor?: string;
-  font?: {
-    color?: string;
-    fontFamily?: string;
-    fontSize?: number;
-    lineHeight?: number;
-    textAlign?: string;
-    textBaseline?: string;
-  };
+  fontColor?: string;
+  fontFamily?: string;
+  fontSize?: number;
+  lineHeight?: number;
+  textAlign?: string;
+  textBaseline?: string;
   rotateCursor?: string;
   hoverCursor?: string;
   hideInput?: boolean;
   hideRotateCP?: boolean;
   hideSizeCP?: boolean;
   hideAnchor?: boolean;
-  onlySizeX?: boolean;
-  onlySizeY?: boolean;
+  disableSizeX?: boolean;
+  disableSizeY?: boolean;
   anchorSize?: number;
   alwaysAnchor?: boolean;
   autoAnchor?: boolean;
@@ -61,7 +60,6 @@ export interface Options {
   scaleKey?: KeyType;
   minScale?: number;
   maxScale?: number;
-  autoExpandDistance?: number;
   keydown?: KeydownType;
   viewPadding?: Padding;
   bkColor?: string;
@@ -74,17 +72,17 @@ export interface Options {
   on?: (event: string, data: any) => void;
 }
 
+export const fontKeys = ['fontColor', 'fontFamily', 'fontSize', 'lineHeight', 'textAlign', 'textBaseline'];
+
 export const DefalutOptions: Options = {
   cacheLen: 30,
   refresh: 30,
-  font: {
-    color: '#222222',
-    fontFamily: '"Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial',
-    fontSize: 12,
-    lineHeight: 1.5,
-    textAlign: 'center',
-    textBaseline: 'middle',
-  },
+  fontColor: '#222222',
+  fontFamily: '"Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial',
+  fontSize: 12,
+  lineHeight: 1.5,
+  textAlign: 'center',
+  textBaseline: 'middle',
   color: '#222222',
   activeColor: '#1890ff',
   hoverColor: '#fa541c',
@@ -95,13 +93,11 @@ export const DefalutOptions: Options = {
   dragColor: '#1890ff',
   rotateCursor: '/assets/img/rotate.cur',
   hoverCursor: 'pointer',
-  minScale: 0.25,
+  minScale: 0.3,
   maxScale: 5,
   anchorSize: 5,
-  autoExpandDistance: 200,
   keydown: KeydownType.Document,
   viewPadding: 0,
-  autoAnchor: true,
   gridSize: 10,
   gridColor: '#f3f3f3',
   ruleColor: '#888888',

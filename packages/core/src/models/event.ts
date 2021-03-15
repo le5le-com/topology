@@ -13,4 +13,5 @@ export enum EventAction {
   SetProps,
   PauseAnimate,
   StopAnimate,
+  Emit
 }
