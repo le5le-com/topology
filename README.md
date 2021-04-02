@@ -1,7 +1,7 @@
 # 支持我们  
 喜欢，请到给我们投票：https://www.oschina.net/project/top_cn_2020 。（开发工具栏，或下滑网页搜索：Topology）
 
-English | [简体中文](./README.CN.md)
+fork hello world English | [简体中文](./README.CN.md)
 
 # Le5le-topology
 
