@@ -24,6 +24,7 @@ import { Socket } from './socket';
 import { MQTT } from './mqtt';
 import { Direction } from './models';
 import { isMobile } from './utils';
+import pkg from './../package.json';
 
 const resizeCursors = ['nw-resize', 'ne-resize', 'se-resize', 'sw-resize'];
 enum MoveInType {
@@ -48,6 +49,7 @@ interface ICaches {
 const dockOffset = 10;
 
 export class Topology {
+  VERSION: string = pkg.version;
   id: string;
   data: TopologyData = new TopologyData();
   clipboard: TopologyData;
@@ -94,14 +96,14 @@ export class Topology {
     activeNode: Node;
     lineControlPoint: Point;
   } = {
-    type: MoveInType.None,
-    activeAnchorIndex: 0,
-    hoverAnchorIndex: 0,
-    hoverNode: null,
-    hoverLine: null,
-    activeNode: null,
-    lineControlPoint: null,
-  };
+      type: MoveInType.None,
+      activeAnchorIndex: 0,
+      hoverAnchorIndex: 0,
+      hoverNode: null,
+      hoverLine: null,
+      activeNode: null,
+      lineControlPoint: null,
+    };
   canvasPos?: DOMRect;
 
   needCache = false;
@@ -239,7 +241,7 @@ export class Topology {
         const obj = JSON.parse(json);
         event.preventDefault();
         this.dropNodes(Array.isArray(obj) ? obj : [obj], event.offsetX, event.offsetY);
-      } catch {}
+      } catch { }
     };
 
     if (isMobile()) {
@@ -303,10 +305,10 @@ export class Topology {
             const scale =
               (event as any).scale ||
               Math.hypot(touches[0].pageX - touches[1].pageX, touches[0].pageY - touches[1].pageY) /
-                Math.hypot(
-                  this.touches[0].pageX - this.touches[1].pageX,
-                  this.touches[0].pageY - this.touches[1].pageY
-                );
+              Math.hypot(
+                this.touches[0].pageX - this.touches[1].pageX,
+                this.touches[0].pageY - this.touches[1].pageY
+              );
 
             event.preventDefault();
             this.scaleTo(scale * this.touchScale, this.touchCenter);

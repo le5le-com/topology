@@ -8,6 +8,8 @@
     "module": "esnext",
     "moduleResolution": "node",
     "target": "es5",
+    "resolveJsonModule":true,
+    "allowSyntheticDefaultImports":true,
     "allowJs": true,
     "lib": ["es2018", "dom"],
     "paths": {

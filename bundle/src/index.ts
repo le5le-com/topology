@@ -13,7 +13,7 @@ registerActivity();
 registerClass();
 registerSequence();
 registerChart();
-
+// Compatible with older versions
 (window as any).Le5leTopology = {
   Topology,
   registerNode,
@@ -30,3 +30,19 @@ registerChart();
   alignNodes,
   spaceBetween,
 };
+export {
+  Topology,
+  registerNode,
+  TopologyData,
+  Pen,
+  Node,
+  Point,
+  Line,
+  Rect,
+  Store,
+  Observer,
+  s8,
+  layout,
+  alignNodes,
+  spaceBetween,
+}

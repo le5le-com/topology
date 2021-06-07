@@ -15,3 +15,7 @@ alsmile123@qq.com
 # License
 
 MIT © le5le.com
+
+# tip
+
+Remember to update package version

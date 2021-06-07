@@ -6,6 +6,8 @@
     "moduleResolution": "node",
     "module": "esnext",
     "target": "esnext",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports":true,
     "paths": {
       "@topology/core": ["../packages/core"],
       "@topology/core/*": ["../packages/core/src/*"],

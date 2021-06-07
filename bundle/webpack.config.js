@@ -7,7 +7,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, '.'),
     filename: '../dist/bundle/index.js',
-    library: 'MA',
+    library: 'Le5le',
     libraryTarget: 'umd',
   },
   module: {
