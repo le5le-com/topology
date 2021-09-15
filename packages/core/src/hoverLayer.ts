@@ -87,7 +87,8 @@ export class HoverLayer extends Layer {
           ctx.stroke();
         }
 
-        if (this.options.autoAnchor) {
+        //增加判断条件: 当节点有锚点时才显示自动锚点
+        if (this.options.autoAnchor && this.node.anchors.length) {
           ctx.beginPath();
           ctx.arc(
             (pen as Node).rect.center.x,
