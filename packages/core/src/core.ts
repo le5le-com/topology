@@ -260,6 +260,8 @@ export class Topology {
           pt.x,
           pt.y
         );
+        this.reCalcRect();
+        this.render();
       } catch { }
     };
 
@@ -2593,8 +2595,8 @@ export class Topology {
     this.animateLayer.readyPlay(undefined, autoplay);
     this.animateLayer.animate();
   }
-
-  updateProps(cache: boolean = true, pens?: Pen[]) {
+  // 重算节点的区域
+  reCalcRect(pens?: Pen[]){
     if (!pens) {
       pens = this.activeLayer.pens;
     }
@@ -2611,6 +2613,9 @@ export class Topology {
         pen.initRect();
       }
     }
+  }
+  updateProps(cache: boolean = true, pens?: Pen[]) {
+    this.reCalcRect(pens);
 
     this.activeLayer.updateLines(pens);
     this.activeLayer.calcControlPoints();
