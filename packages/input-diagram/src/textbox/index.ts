@@ -33,10 +33,10 @@ export function textbox(ctx: CanvasRenderingContext2D, node: Node) {
 
       node.elementRendered = true;
     });
-  }
 
-  // 节点样式改变时，修改对应值
-  if (inputObjs[node.id].input) changeStyle(node.elementId, node);
+    // 节点样式改变时，修改对应值
+    if (inputObjs[node.id].input) changeStyle(node.elementId, node);
+  }
 }
 function changeStyle(id: string, node: Node) {
   const input = document.getElementById(id);

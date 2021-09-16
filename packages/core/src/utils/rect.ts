@@ -62,6 +62,8 @@ export function getBboxOfPoints(points: Point[]) {
 
   for (const item of points) {
     const { x, y } = item;
+    if(isNaN(x) || isNaN(y)) 
+      continue;
     x1 = Math.min(x1, x);
     y1 = Math.min(y1, y);
     x2 = Math.max(x2, x);

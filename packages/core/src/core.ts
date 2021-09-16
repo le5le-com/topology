@@ -23,7 +23,7 @@ import { formatPadding } from './utils/padding';
 import { Socket } from './socket';
 import { MQTT } from './mqtt';
 import { Direction, EventType as SocketEventType } from './models';
-import { isMobile } from './utils';
+import { createCacheTable, getCache, isMobile, pushCache, spliceCache } from './utils';
 import pkg from './../package.json';
 
 declare const window: any;
@@ -48,6 +48,7 @@ enum MoveInType {
 
 interface ICaches {
   index: number;
+  dbIndex: number;   // indexDB 中实际的 index
   list: TopologyData[];
 }
 
@@ -60,6 +61,7 @@ export class Topology {
   clipboard: TopologyData;
   caches: ICaches = {
     index: 0,
+    dbIndex: 0,
     list: [],
   };
   options: Options;
@@ -126,6 +128,11 @@ export class Topology {
 
   socket: Socket;
   mqtt: MQTT;
+
+  // 内存中的 caches 数量
+  get ramCaches() : number {
+    return 5;
+  }
 
   private socketFn: Function;
 
@@ -233,6 +240,7 @@ export class Topology {
     this.subcribeEmit = Store.subscribe(
       this.generateStoreKey('LT:emit'),
       (e: { event: string; pen: Pen; params: string }) => {
+        // TODO: 此处为何不使用 dispatch 
         this.emit(e.event, e);
       }
     );
@@ -371,6 +379,10 @@ export class Topology {
       };
     } else {
       this.divLayer.canvas.onmousedown = (event: MouseEvent) => {
+        if((event.target as any).nodeName ==='INPUT' && (event.target as any).type ==='range' && this.data.locked){
+          return;
+        }
+        
         if (this.touchedNode) {
           if (this.touchedNode.name === 'graffiti') {
             this.touchedNode.rect = new Rect(0, 0, 0, 0);
@@ -751,6 +763,8 @@ export class Topology {
     this.lock(this.data.locked);
 
     this.caches.list = [];
+    createCacheTable();  // 清空数据
+    this.caches.dbIndex = -1;
     this.cache();
 
     this.divLayer.clear();
@@ -2250,13 +2264,18 @@ export class Topology {
     if (this.options.cacheLen == 0 || this.data.locked) return;
     if (this.caches.index < this.caches.list.length - 1) {
       this.caches.list.splice(this.caches.index + 1, this.caches.list.length - this.caches.index - 1);
+      // 删除 indexDB 的值
+      spliceCache(this.caches.dbIndex + 1);
     }
-    this.caches.list.push(this.pureData());
-    if (this.caches.list.length > this.options.cacheLen) {
+    const data = this.pureData();
+    this.caches.list.push(data);
+    pushCache(data, this.caches.dbIndex + 1, this.options.cacheLen);
+    if (this.caches.list.length > this.ramCaches) {
       this.caches.list.shift();
     }
 
     this.caches.index = this.caches.list.length - 1;
+    this.caches.dbIndex++;  // 向后移动
   }
 
   cacheReplace(pens: Pen[]) {
@@ -2293,12 +2312,26 @@ export class Topology {
 
     this.divLayer.clear(true);
     this.animateLayer.stop();
+    this.caches.dbIndex--;  // 数据库中的位置前移
     this.data = createData(this.caches.list[--this.caches.index], this.id);
     this.render(true);
     this.divLayer.render();
 
     if (noRedo) {
       this.caches.list.splice(this.caches.index + 1, this.caches.list.length - this.caches.index - 1);
+      // 不允许恢复，同时删除数据库中的值
+      spliceCache(this.caches.dbIndex);
+    }
+    // 当 index 到 list 中间时，开始向左侧添加 indexDB 中的内容
+    if(this.caches.index <= this.caches.list.length / 2 - 1){
+      const sub = this.caches.index - 0 + 1;  // 距离左侧前一个的差距
+      getCache(this.caches.dbIndex - sub).then(data=>{
+        if(data){
+          this.caches.list.pop();
+          this.caches.list.unshift(data);
+          this.caches.index++;
+        }
+      });
     }
 
     this.dispatch('undo', this.data);
@@ -2312,9 +2345,22 @@ export class Topology {
       return;
     }
     this.divLayer.clear(true);
+    this.caches.dbIndex++;  // 向后移动
     this.data = createData(this.caches.list[++this.caches.index], this.id);
     this.render(true);
     this.divLayer.render();
+
+    // 当 index 到 list 中间时，开始向右侧加
+    if(this.caches.index >= this.caches.list.length / 2){
+      const add = this.caches.list.length - this.caches.index;  // 距离右侧的差距
+      getCache(this.caches.dbIndex + add).then(data=>{
+        if(data){
+          this.caches.list.shift();
+          this.caches.list.push(data);
+          this.caches.index--;
+        }
+      });
+    }
 
     this.dispatch('redo', this.data);
   }
@@ -2331,6 +2377,7 @@ export class Topology {
     rect.y -= p[0];
     rect.width += p[3] + p[1];
     rect.height += p[0] + p[2];
+    rect.init();
 
     const dpi = this.offscreen.getDpiRatio();
     rect.scale(dpi);
