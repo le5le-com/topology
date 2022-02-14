@@ -1689,6 +1689,7 @@ export class Topology {
       case 'a':
       case 'A':
         this.activeLayer.setPens(this.data.pens);
+        this.dispatch('multi', this.data.pens)
         done = true;
         break;
       case 'Delete':
