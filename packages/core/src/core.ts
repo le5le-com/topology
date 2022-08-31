@@ -2123,22 +2123,22 @@ export class Topology {
 
   private getLineDock(point: Point, mode: AnchorMode = AnchorMode.Default) {
     this.hoverLayer.dockAnchor = undefined;
+    const pt = new Point(point.x, point.y);
     for (const item of this.data.pens) {
       if (item instanceof Node) {
-        const pen = item.hit(point, 10);
-
+        const pen = item.hit(pt, 10);
         if (!pen) {
           continue;
         }
         if (pen.type === PenType.Line) {
-          if (pen.from.hit(point, 10)) {
+          if (pen.from.hit(pt, 10)) {
             point.x = pen.from.x;
             point.y = pen.from.y;
             this.hoverLayer.dockAnchor = pen.from;
             break;
           }
 
-          if (pen.to.hit(point, 10)) {
+          if (pen.to.hit(pt, 10)) {
             point.x = pen.to.x;
             point.y = pen.to.y;
             this.hoverLayer.dockAnchor = pen.to;
@@ -2149,7 +2149,7 @@ export class Topology {
         }
 
         this.hoverLayer.node = pen;
-        if (this.options.autoAnchor && pen.rect.center.hit(point, 10)) {
+        if (this.options.autoAnchor && pen.rect.center.hit(pt, 10)) {
           point.id = pen.id;
           point.autoAnchor = true;
           point.x = pen.rect.center.x;
@@ -2162,7 +2162,7 @@ export class Topology {
             continue;
           }
 
-          if (pen.rotatedAnchors[i].hit(point, 10)) {
+          if (pen.rotatedAnchors[i].hit(pt, 10)) {
             point.id = pen.id;
             point.anchorIndex = i;
             point.autoAnchor = false;
@@ -2177,7 +2177,15 @@ export class Topology {
         if (this.hoverLayer.dockAnchor) {
           break;
         }
-      } else if (item instanceof Line) {
+      }
+    }
+
+    if (point.id) {
+      return point;
+    }
+
+    for (const item of this.data.pens) {
+      if (item instanceof Line) {
         if (item.id === this.hoverLayer.line.id) {
           continue;
         }
@@ -2185,7 +2193,7 @@ export class Topology {
         if (item.children) {
           let found = false;
           for (let child of item.children as any) {
-            if (child.from.hit(point, 10)) {
+            if (child.from.hit(pt, 10)) {
               point.x = child.from.x;
               point.y = child.from.y;
               this.hoverLayer.dockAnchor = child.from;
@@ -2193,7 +2201,7 @@ export class Topology {
               break;
             }
 
-            if (child.to.hit(point, 10)) {
+            if (child.to.hit(pt, 10)) {
               point.x = child.to.x;
               point.y = child.to.y;
               this.hoverLayer.dockAnchor = child.to;
@@ -2203,7 +2211,7 @@ export class Topology {
 
             if (child.controlPoints) {
               for (const cp of child.controlPoints) {
-                if (cp.hit(point, 10)) {
+                if (cp.hit(pt, 10)) {
                   point.x = cp.x;
                   point.y = cp.y;
                   this.hoverLayer.dockAnchor = cp;
@@ -2217,14 +2225,14 @@ export class Topology {
             continue;
           }
         } else {
-          if (item.from.hit(point, 10)) {
+          if (item.from.hit(pt, 10)) {
             point.x = item.from.x;
             point.y = item.from.y;
             this.hoverLayer.dockAnchor = item.from;
             continue;
           }
 
-          if (item.to.hit(point, 10)) {
+          if (item.to.hit(pt, 10)) {
             point.x = item.to.x;
             point.y = item.to.y;
             this.hoverLayer.dockAnchor = item.to;
@@ -2233,7 +2241,7 @@ export class Topology {
 
           if (item.controlPoints) {
             for (const cp of item.controlPoints) {
-              if (cp.hit(point, 10)) {
+              if (cp.hit(pt, 10)) {
                 point.x = cp.x;
                 point.y = cp.y;
                 this.hoverLayer.dockAnchor = cp;
@@ -2247,7 +2255,6 @@ export class Topology {
 
     return point;
   }
-
   private getPensInRect(rect: Rect) {
     if (rect.width < 0) {
       rect.width = -rect.width;
