@@ -1348,7 +1348,7 @@ export class Node extends Pen {
     for (const pt of pts) {
       pt.rotate(this.rotate, this.rect.center);
     }
-    return pointInRect(point, pts);
+    return pointInRect(point, pts, padding);
   }
 
   hit(pt: { x: number; y: number }, padding = 0) {

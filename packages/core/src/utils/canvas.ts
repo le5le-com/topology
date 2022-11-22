@@ -88,24 +88,27 @@ export function getParent(pens: Pen[], child: Pen): Node {
   return parent;
 }
 
-export function pointInRect(point: { x: number; y: number; }, vertices: Point[]): boolean {
+export function pointInRect(pt: { x: number; y: number; }, vertices: Point[], padding = 0): boolean {
   if (vertices.length < 3) {
     return false;
   }
-  let isIn = false;
-
-  let last = vertices[vertices.length - 1];
-  for (const item of vertices) {
-    if (((last.y > point.y) !== (item.y > point.y))) {
-      if (item.x + ((point.y - item.y) * (last.x - item.x)) / (last.y - item.y) > point.x) {
-        isIn = !isIn;
-      }
+  const rect = {x: 0, y: 0, ex: 0, ey: 0};
+  vertices.forEach((p: Point) => {
+    if (!rect.x || rect.x > p.x) {
+      rect.x = p.x;
     }
+    if (!rect.y || rect.y > p.y) {
+      rect.y = p.y;
+    }
+    if (rect.ex < p.x) {
+      rect.ex = p.x;
+    }
+    if (rect.ey < p.y) {
+      rect.ey = p.y;
+    }
+  });
 
-    last = item;
-  }
-
-  return isIn;
+  return  pt && pt.x > rect.x - padding && pt.x < rect.ex + padding && pt.y > rect.y - padding && pt.y < rect.ey + padding;
 }
 
 export function pointInLine(point: Point, from: Point, to: Point, padding = 1): boolean {
@@ -121,7 +124,7 @@ export function pointInLine(point: Point, from: Point, to: Point, padding = 1): 
     new Point(from.x + x, from.y + y)
   ];
 
-  return pointInRect(point, points);
+  return pointInRect(point, points, padding);
 }
 
 export function lineLen(from: Point, to: Point): number {
