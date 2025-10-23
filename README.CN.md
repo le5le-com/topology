@@ -2,7 +2,7 @@
 
 # 这里是0.x.x的老版本
 
-一个全新的更好的1.0版本在这里： https://github.com/le5le-com/topology.js
+一个全新的更好的1.0版本在这里： https://github.com/le5le-com/meta2d.js
 
 # Le5le-topology
 
