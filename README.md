@@ -1,6 +1,6 @@
 # This repo is for topology 0.x.x
 
-The new version 1.0 is [topology.js](https://github.com/le5le-com/topology.js) ！
+The new version 1.0 is [meta2d.js](https://github.com/le5le-com/meta2d.js) ！
 
 English | [简体中文](./README.CN.md)
 
